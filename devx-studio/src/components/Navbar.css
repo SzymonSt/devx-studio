@@ -1,0 +1,24 @@
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom:0;
+    width: 4vw;
+    height: 100vh;
+    background-color: #f0f0f0;
+    display: block;
+}
+.navbar-logo{
+  margin:0;
+  padding: 0;
+  background-color: aqua;
+}
+.navbar-menu{
+  margin:0 auto;
+  padding: 0;
+  background-color: aqua;
+}
+.navbar-menu > h3{
+  margin:0;
+  padding: 0;
+}

@@ -1,0 +1,13 @@
+.dashboard-content{
+    width: auto;
+}
+
+.verticals{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    grid-gap: 1vw;
+}
+
+.vertical{
+    width: 30vw;
+}

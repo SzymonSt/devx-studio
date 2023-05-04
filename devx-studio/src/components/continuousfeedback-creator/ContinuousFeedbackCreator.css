@@ -1,0 +1,9 @@
+.cf-creator{
+    width: 40vw;
+    height: 80vh;
+    margin: 0 auto;
+    position: fixed;
+    top: 12%;
+    left: 32%;
+    background-color: rgb(34, 200, 79);
+}
