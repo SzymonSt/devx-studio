@@ -39,7 +39,6 @@
 .main-screen{
   width: 96vw;
   height: 100vh;
-  margin-left: 4vw;
 }
 .canv{
   display: flex;
