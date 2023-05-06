@@ -1,14 +1,32 @@
-import React from "react";
-import Form from "react-bootstrap/esm/Form";
+import React, { useState } from "react";
+import "./Question.css"
+import {Form} from "react-bootstrap";
+import {RiDeleteBin5Line} from 'react-icons/ri';
 
 type QuestionProps = {
     questionContent: string;
+    id: string;
+    onRemove: (id: string) => void;
 }
 
-const Question: React.FC<QuestionProps> = ({questionContent}) => {
+const Question: React.FC<QuestionProps> = ({questionContent, id, onRemove}) => {
+    const [questionContentState, setQuestionContent] = useState("");
+    const [isCountetdToOverallScore, setIsCountetdToOverallScore] = useState(true);
+    const handleRemove = () => {
+        console.log("Removing question at index: " + id);
+        onRemove(id);
+    }
     return (
         <div className="question">
-            <Form.Label><p>{questionContent}</p></Form.Label>
+            <div className="question-header">
+                <button className="btn bin-icon" onClick={handleRemove}><RiDeleteBin5Line size={25} /></button>
+                <Form.Control
+                    placeholder={questionContent}
+                    value={questionContentState}
+                    onChange={(event) => setQuestionContent(event.target.value)}>
+                </Form.Control>
+            </div>
+            <Form.Check type="switch" label="Count to overall vertical score" checked={isCountetdToOverallScore} onChange={(event) => setIsCountetdToOverallScore(event.target.checked)}/>
             <Form.Range />
         </div>
     );

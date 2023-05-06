@@ -12,15 +12,14 @@ const ContinuousFeedbackCreator: React.FC<ContinuousFeedbackCreatorProps> = ({is
     const [sources, setSources] = useState<JSX.Element[]>([]);
 
     const addSource = (type: string) => {
-        var name  = "New_" + type + (sources.length+1);
+        var name  = "New_" + type + (sources.length);
         setSources([...sources, <DataSource type={type} name={name} index={sources.length} onRemove={removeSource} />]);
+        console.log(sources.length)
     }
 
     const removeSource = (index: number) => {
-        console.log("Removing source at index: " + index);
         const newSources = [...sources];
-        var deleted = newSources.splice(index, 1);
-        console.log("Deleted: " + deleted.length);
+        newSources.splice(index, 1);
         setSources(newSources);
     }
 
