@@ -13,7 +13,6 @@ const Question: React.FC<QuestionProps> = ({questionContent, id, onRemove}) => {
     const [questionContentState, setQuestionContent] = useState("");
     const [isCountetdToOverallScore, setIsCountetdToOverallScore] = useState(true);
     const handleRemove = () => {
-        console.log("Removing question at index: " + id);
         onRemove(id);
     }
     return (
@@ -26,7 +25,7 @@ const Question: React.FC<QuestionProps> = ({questionContent, id, onRemove}) => {
                     onChange={(event) => setQuestionContent(event.target.value)}>
                 </Form.Control>
             </div>
-            <Form.Check type="switch" label="Count to overall vertical score" checked={isCountetdToOverallScore} onChange={(event) => setIsCountetdToOverallScore(event.target.checked)}/>
+            <Form.Check type="switch" label="Count into overall vertical score" checked={isCountetdToOverallScore} onChange={(event) => setIsCountetdToOverallScore(event.target.checked)}/>
             <Form.Range />
         </div>
     );

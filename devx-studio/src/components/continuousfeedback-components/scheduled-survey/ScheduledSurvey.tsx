@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import { v4 as uuidv4 } from 'uuid';
 import Question from "../../survey-components/Question";
-import { Dropdown, Form } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 
 
 type ScheduledSurveyProps = {
@@ -14,13 +14,15 @@ const ScheduledSurvey: React.FC<ScheduledSurveyProps> = ({name, index, onRemove}
     const [questions, setQuestions] = useState<JSX.Element[]>([]);
     const [selectedScheduleOption, setSelectedScheduleOption] = useState<string>("");
 
+
     const handleSurveyRemoval = () => {
-        console.log("Removing survey at index: " + index);
         onRemove(index);
     }
     const addQuestion = () => {
         var questionContent = "New Question " + (questions.length+1);
-        setQuestions([...questions, <Question questionContent={questionContent} id={uuidv4()} onRemove={removeQuestion} />]);
+        var id = uuidv4();
+        console.log(id);
+        setQuestions([...questions, <Question questionContent={questionContent} id={id} onRemove={removeQuestion} />]);
     }
     const removeQuestion = (index: string) => {
         setQuestions(questions => questions.filter((question, i) => question.props.id !== index));
@@ -28,7 +30,7 @@ const ScheduledSurvey: React.FC<ScheduledSurveyProps> = ({name, index, onRemove}
     const renderQuestions = () => {
         return questions.map((question, index) => {
             return (
-                <div className="source" key={index}>
+                <div className="source" key={question.props.id}>
                     <div className="source-body">
                         {question}
                     </div>
