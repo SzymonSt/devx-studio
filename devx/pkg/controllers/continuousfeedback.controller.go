@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"devx/pkg/modules"
+	"devx/pkg/models"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -20,7 +20,7 @@ func NewContinuousFeedbackController(db *mongo.Client) ContinuousFeedbackControl
 }
 
 func (cfc *ContinuousFeedbackController) GetAll(ctx *gin.Context) {
-	var continuousFeedback []modules.ContinuousFeedback
+	var continuousFeedback []models.ContinuousFeedback
 	cursor, err := cfc.dbClient.Database("devx").Collection("continuousfeedback").Find(ctx, nil)
 	if err != nil {
 		ctx.JSON(500, gin.H{
@@ -39,7 +39,7 @@ func (cfc *ContinuousFeedbackController) GetAll(ctx *gin.Context) {
 }
 
 func (cfc *ContinuousFeedbackController) Get(ctx *gin.Context) {
-	var continuousFeedback modules.ContinuousFeedback
+	var continuousFeedback models.ContinuousFeedback
 	id := ctx.Param("id")
 	objectId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -59,7 +59,7 @@ func (cfc *ContinuousFeedbackController) Get(ctx *gin.Context) {
 }
 
 func (cfc *ContinuousFeedbackController) Create(ctx *gin.Context) {
-	var continuousFeedback modules.ContinuousFeedback
+	var continuousFeedback models.ContinuousFeedback
 	err := ctx.BindJSON(&continuousFeedback)
 	if err != nil {
 		ctx.JSON(400, gin.H{
@@ -90,7 +90,7 @@ func (cfc *ContinuousFeedbackController) Update(ctx *gin.Context) {
 		return
 	}
 
-	var continuousFeedback modules.ContinuousFeedback
+	var continuousFeedback models.ContinuousFeedback
 	err = ctx.BindJSON(&continuousFeedback)
 	if err != nil {
 		ctx.JSON(400, gin.H{

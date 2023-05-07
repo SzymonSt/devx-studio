@@ -1,4 +1,4 @@
-package modules
+package models
 
 type ContinuousFeedback struct {
 	FeedbackId       string            `json:"feedbackId" bson:"feedbackId"`

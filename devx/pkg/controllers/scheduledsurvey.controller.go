@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"devx/pkg/modules"
+	"devx/pkg/models"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -20,7 +20,7 @@ func NewScheduledSurveyController(dbClient *mongo.Client) ScheduledSurveyControl
 }
 
 func (ssc *ScheduledSurveyController) GetAll(ctx *gin.Context) {
-	var scheduledSurveys []modules.ScheduledSurvey
+	var scheduledSurveys []models.ScheduledSurvey
 	cursor, err := ssc.dbClient.Database("devx").Collection("scheduledsurveys").Find(ctx, nil)
 	if err != nil {
 		ctx.JSON(500, gin.H{
@@ -39,7 +39,7 @@ func (ssc *ScheduledSurveyController) GetAll(ctx *gin.Context) {
 }
 
 func (ssc *ScheduledSurveyController) Get(ctx *gin.Context) {
-	var scheduledSurvey modules.ScheduledSurvey
+	var scheduledSurvey models.ScheduledSurvey
 	id := ctx.Param("id")
 	objectId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -59,7 +59,7 @@ func (ssc *ScheduledSurveyController) Get(ctx *gin.Context) {
 }
 
 func (ssc *ScheduledSurveyController) Create(ctx *gin.Context) {
-	var scheduledSurvey modules.ScheduledSurvey
+	var scheduledSurvey models.ScheduledSurvey
 	err := ctx.BindJSON(&scheduledSurvey)
 	if err != nil {
 		ctx.JSON(400, gin.H{
@@ -90,7 +90,7 @@ func (ssc *ScheduledSurveyController) Update(ctx *gin.Context) {
 		return
 	}
 
-	var scheduledSurvey modules.ScheduledSurvey
+	var scheduledSurvey models.ScheduledSurvey
 	err = ctx.BindJSON(&scheduledSurvey)
 	if err != nil {
 		ctx.JSON(400, gin.H{

@@ -1,4 +1,4 @@
-package modules
+package models
 
 type ScheduledSurvey struct {
 	Id                         string `json:"id" bson:"_id"`
@@ -8,6 +8,7 @@ type ScheduledSurvey struct {
 	OpenPeriod                 string `json:"openPeriod"`
 	Interval                   int    `json:"interval"`
 	Questions                  []struct {
+		QuestionId                 string `json:"questionId"`
 		Question                   string `json:"question"`
 		IsCalculatedInOverallScore bool   `json:"isCalculatedInOverallScore"`
 	} `json:"questions"`
