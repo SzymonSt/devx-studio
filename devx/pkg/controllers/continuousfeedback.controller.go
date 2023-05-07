@@ -9,37 +9,37 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type ScheduledSurveyController struct {
+type ContinuousFeedbackController struct {
 	dbClient *mongo.Client
 }
 
-func NewScheduledSurveyController(dbClient *mongo.Client) ScheduledSurveyController {
-	return ScheduledSurveyController{
-		dbClient: dbClient,
+func NewContinuousFeedbackController(db *mongo.Client) ContinuousFeedbackController {
+	return ContinuousFeedbackController{
+		dbClient: db,
 	}
 }
 
-func (ssc *ScheduledSurveyController) GetAll(ctx *gin.Context) {
-	var scheduledSurveys []modules.ScheduledSurvey
-	cursor, err := ssc.dbClient.Database("devx").Collection("scheduledsurveys").Find(ctx, nil)
+func (cfc *ContinuousFeedbackController) GetAll(ctx *gin.Context) {
+	var continuousFeedback []modules.ContinuousFeedback
+	cursor, err := cfc.dbClient.Database("devx").Collection("continuousfeedback").Find(ctx, nil)
 	if err != nil {
 		ctx.JSON(500, gin.H{
 			"message": "Internal server error",
 		})
 		return
 	}
-	err = cursor.All(ctx, &scheduledSurveys)
+	err = cursor.All(ctx, &continuousFeedback)
 	if err != nil {
 		ctx.JSON(500, gin.H{
 			"message": "Internal server error",
 		})
 		return
 	}
-	ctx.JSON(200, scheduledSurveys)
+	ctx.JSON(200, continuousFeedback)
 }
 
-func (ssc *ScheduledSurveyController) Get(ctx *gin.Context) {
-	var scheduledSurvey modules.ScheduledSurvey
+func (cfc *ContinuousFeedbackController) Get(ctx *gin.Context) {
+	var continuousFeedback modules.ContinuousFeedback
 	id := ctx.Param("id")
 	objectId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -48,26 +48,26 @@ func (ssc *ScheduledSurveyController) Get(ctx *gin.Context) {
 		})
 	}
 	filter := bson.M{"_id": objectId}
-	err = ssc.dbClient.Database("devx").Collection("scheduledsurveys").FindOne(ctx, filter).Decode(&scheduledSurvey)
+	err = cfc.dbClient.Database("devx").Collection("continuouseedback").FindOne(ctx, filter).Decode(&continuousFeedback)
 	if err != nil {
 		ctx.JSON(500, gin.H{
 			"message": "Internal server error",
 		})
 		return
 	}
-	ctx.JSON(200, scheduledSurvey)
+	ctx.JSON(200, continuousFeedback)
 }
 
-func (ssc *ScheduledSurveyController) Create(ctx *gin.Context) {
-	var scheduledSurvey modules.ScheduledSurvey
-	err := ctx.BindJSON(&scheduledSurvey)
+func (cfc *ContinuousFeedbackController) Create(ctx *gin.Context) {
+	var continuousFeedback modules.ContinuousFeedback
+	err := ctx.BindJSON(&continuousFeedback)
 	if err != nil {
 		ctx.JSON(400, gin.H{
 			"message": "Invalid request body",
 		})
 		return
 	}
-	inserResult, err := ssc.dbClient.Database("devx").Collection("scheduledsurveys").InsertOne(ctx, scheduledSurvey)
+	inserResult, err := cfc.dbClient.Database("devx").Collection("continuousfeedback").InsertOne(ctx, continuousFeedback)
 	if err != nil {
 		ctx.JSON(500, gin.H{
 			"message": "Internal server error",
@@ -80,7 +80,7 @@ func (ssc *ScheduledSurveyController) Create(ctx *gin.Context) {
 	})
 }
 
-func (ssc *ScheduledSurveyController) Update(ctx *gin.Context) {
+func (cfc *ContinuousFeedbackController) Update(ctx *gin.Context) {
 	id := ctx.Param("id")
 	objectId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -90,14 +90,14 @@ func (ssc *ScheduledSurveyController) Update(ctx *gin.Context) {
 		return
 	}
 
-	var scheduledSurvey modules.ScheduledSurvey
-	err = ctx.BindJSON(&scheduledSurvey)
+	var continuousFeedback modules.ContinuousFeedback
+	err = ctx.BindJSON(&continuousFeedback)
 	if err != nil {
 		ctx.JSON(400, gin.H{
 			"message": "Invalid request body",
 		})
 	}
-	updateResult, err := ssc.dbClient.Database("devx").Collection("scheduledsurveys").UpdateByID(ctx, objectId, bson.M{"$set": scheduledSurvey})
+	updateResult, err := cfc.dbClient.Database("devx").Collection("continuousfeedback").UpdateByID(ctx, objectId, bson.M{"$set": continuousFeedback})
 	if err != nil {
 		ctx.JSON(500, gin.H{
 			"message": "Internal server error",
@@ -110,7 +110,7 @@ func (ssc *ScheduledSurveyController) Update(ctx *gin.Context) {
 	})
 }
 
-func (ssc *ScheduledSurveyController) Delete(ctx *gin.Context) {
+func (cfc *ContinuousFeedbackController) Delete(ctx *gin.Context) {
 	id := ctx.Param("id")
 	objectId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -120,7 +120,7 @@ func (ssc *ScheduledSurveyController) Delete(ctx *gin.Context) {
 		return
 	}
 
-	_, err = ssc.dbClient.Database("devx").Collection("scheduledsurveys").DeleteOne(ctx, bson.M{"_id": objectId})
+	_, err = cfc.dbClient.Database("devx").Collection("continuousfeedback").DeleteOne(ctx, bson.M{"_id": objectId})
 	if err != nil {
 		ctx.JSON(500, gin.H{
 			"message": "Internal server error",

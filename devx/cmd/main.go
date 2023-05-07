@@ -24,6 +24,9 @@ func main() {
 	ScheduledSurveyController := controllers.NewScheduledSurveyController(dbClient)
 	ScheduledSurveyRouteController := routes.NewScheduledSurveyRouteController(ScheduledSurveyController)
 
+	ContinuousFeedbackController := controllers.NewContinuousFeedbackController(dbClient)
+	ContinuousFeedbackRouteController := routes.NewContinuousFeedbackRouteController(ContinuousFeedbackController)
+
 	corsConfig := cors.DefaultConfig()
 	corsConfig.AllowOrigins = []string{"http://localhost:8000", config.ClientOrigin}
 	corsConfig.AllowCredentials = true
@@ -31,11 +34,12 @@ func main() {
 	server.Use(cors.New(corsConfig))
 
 	router := server.Group("/api")
-	router.GET("/healthchecker", func(ctx *gin.Context) {
+	router.GET("/healthz", func(ctx *gin.Context) {
 		message := "Welcome to Golang with Gorm and Postgres"
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": message})
 	})
 
 	ScheduledSurveyRouteController.RegisterRoutes(router)
+	ContinuousFeedbackRouteController.RegisterRoutes(router)
 	log.Fatal(server.Run(":" + config.ServerPort))
 }
