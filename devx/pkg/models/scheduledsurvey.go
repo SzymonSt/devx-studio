@@ -5,11 +5,11 @@ type ScheduledSurvey struct {
 	ContinuousFeedbackParentId string `json:"continuousFeedbackParentId" bson:"continuousFeedbackParentId"`
 	Name                       string `json:"name" bson:"name"`
 	LastOpened                 string `json:"lastOpened" bson:"lastOpened"`
-	OpenPeriod                 string `json:"openPeriod"`
-	Interval                   int    `json:"interval"`
+	OpenPeriod                 string `json:"openPeriod" bson:"openPeriod"`
+	Interval                   int    `json:"interval" bson:"interval"`
 	Questions                  []struct {
-		QuestionId                 string `json:"questionId"`
-		Question                   string `json:"question"`
-		IsCalculatedInOverallScore bool   `json:"isCalculatedInOverallScore"`
-	} `json:"questions"`
+		QuestionId                 string `json:"questionId" bson:"questionId"`
+		Question                   string `json:"question" bson:"question"`
+		IsCalculatedInOverallScore bool   `json:"isCalculatedInOverallScore" bson:"isCalculatedInOverallScore"`
+	} `json:"questions" bson:"questions"`
 }

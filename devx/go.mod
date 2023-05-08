@@ -5,6 +5,7 @@ go 1.17
 require go.mongodb.org/mongo-driver v1.11.6
 
 require (
+	github.com/ahmetalpbalkan/go-linq v3.0.0+incompatible // indirect
 	github.com/bytedance/sonic v1.8.8 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect

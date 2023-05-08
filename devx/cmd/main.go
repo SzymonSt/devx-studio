@@ -21,8 +21,8 @@ func main() {
 	}
 
 	dbClient := util.ConnectDB(config.DBUri)
-	ScheduledSurveyController := controllers.NewScheduledSurveyController(dbClient)
-	ScheduledSurveyRouteController := routes.NewScheduledSurveyRouteController(ScheduledSurveyController)
+	ClassicSurveyController := controllers.NewClassicSurveyController(dbClient)
+	ClassicSurveyRouteController := routes.NewClassicSurveyRouteController(ClassicSurveyController)
 
 	ContinuousFeedbackController := controllers.NewContinuousFeedbackController(dbClient)
 	ContinuousFeedbackRouteController := routes.NewContinuousFeedbackRouteController(ContinuousFeedbackController)
@@ -39,7 +39,7 @@ func main() {
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": message})
 	})
 
-	ScheduledSurveyRouteController.RegisterRoutes(router)
+	ClassicSurveyRouteController.RegisterRoutes(router)
 	ContinuousFeedbackRouteController.RegisterRoutes(router)
 	log.Fatal(server.Run(":" + config.ServerPort))
 }

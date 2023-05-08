@@ -67,7 +67,7 @@ func (cfc *ContinuousFeedbackController) Create(ctx *gin.Context) {
 		})
 		return
 	}
-	inserResult, err := cfc.dbClient.Database("devx").Collection("continuousfeedback").InsertOne(ctx, continuousFeedback)
+	insertResult, err := cfc.dbClient.Database("devx").Collection("continuousfeedback").InsertOne(ctx, continuousFeedback)
 	if err != nil {
 		ctx.JSON(500, gin.H{
 			"message": "Internal server error",
@@ -76,7 +76,7 @@ func (cfc *ContinuousFeedbackController) Create(ctx *gin.Context) {
 	}
 	ctx.JSON(200, gin.H{
 		"message": "Successfully created",
-		"id":      inserResult.InsertedID,
+		"id":      insertResult.InsertedID,
 	})
 }
 
@@ -130,5 +130,26 @@ func (cfc *ContinuousFeedbackController) Delete(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{
 		"message": "Successfully deleted",
 		"id":      id,
+	})
+}
+
+func (cfc *ContinuousFeedbackController) PlaceAnswer(ctx *gin.Context) {
+	var answer models.ContinuousFeedbackAnswer
+	err := ctx.BindJSON(&answer)
+	if err != nil {
+		ctx.JSON(400, gin.H{
+			"message": "Invalid request body",
+		})
+		return
+	}
+	insertResult, err := cfc.dbClient.Database("devx").Collection("continuousfeedbackanswers").InsertOne(ctx, answer)
+	if err != nil {
+		ctx.JSON(500, gin.H{
+			"message": "Internal server error",
+		})
+	}
+	ctx.JSON(200, gin.H{
+		"message": "Successfully created",
+		"id":      insertResult.InsertedID,
 	})
 }
