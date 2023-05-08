@@ -5,6 +5,7 @@ import (
 
 	. "github.com/ahmetalpbalkan/go-linq"
 	"github.com/gin-gonic/gin"
+	"github.com/montanaflynn/stats"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -34,7 +35,7 @@ func (vdc *VerticalDataController) GetVerticalData(ctx *gin.Context) {
 		return
 	}
 
-	scores := make([]float32, 0)
+	scores := make([]float64, 0)
 	for _, answer := range answers {
 		for _, question := range answer.Questions {
 			if question.IsCalculatedInOverallScore {
@@ -86,10 +87,54 @@ func (vdc *VerticalDataController) collectAnswers(ctx *gin.Context, verticalId s
 
 }
 
-func calculateOverallScore(scores []float32) (overallScore models.Score) {
-	return models.Score{}
+func calculateOverallScore(scores []float64) (overallScore models.Score) {
+	var mean float64
+	var percentile95 float64
+	var percentile99 float64
+
+	mean, _ = stats.Mean(scores)
+	percentile95, _ = stats.Percentile(scores, 95)
+	percentile99, _ = stats.Percentile(scores, 99)
+
+	return models.Score{
+		Mean:         mean,
+		Percentile95: percentile95,
+		Percentile99: percentile99,
+	}
 }
 
-func calculatePerQuestionPerSurveyScore(scores []*models.ContinuousFeedbackAnswer) models.SurveyScore {
-	return models.SurveyScore{}
+func calculatePerQuestionPerSurveyScore(scores []*models.ContinuousFeedbackAnswer) *models.SurveyScore {
+	questionScoresTotals := make([]*models.QuestionScore, 0)
+	for _, answer := range scores {
+		groupedQuestionScores := map[string][]*models.ContinuousFeedbackAnswersQuestion{}
+		From(answer.Questions).GroupBy(
+			func(question interface{}) interface{} {
+				return question.(*models.ContinuousFeedbackAnswersQuestion).QuestionId
+			},
+			func(question interface{}) interface{} {
+				return question
+			},
+		).ToMap(&groupedQuestionScores)
+
+		for qid, question := range groupedQuestionScores {
+			questionScores := make([]float64, 0)
+			for _, questionAnswer := range question {
+				questionScores = append(questionScores, questionAnswer.Score)
+			}
+			questionScoresTotals = append(questionScoresTotals, &models.QuestionScore{
+				QuestionId:      qid,
+				QuestionContent: question[0].Question,
+				Score:           calculateOverallScore(questionScores),
+			})
+		}
+
+	}
+
+	return &models.SurveyScore{
+		SurveyName:     scores[0].SurveyName,
+		SurveyId:       scores[0].SurveyId,
+		CFId:           scores[0].ContinuousFeedbackParentId,
+		CFName:         scores[0].CFName,
+		QuestionScores: questionScoresTotals,
+	}
 }
