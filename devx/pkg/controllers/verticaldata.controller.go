@@ -55,7 +55,7 @@ func (vdc *VerticalDataController) GetVerticalData(ctx *gin.Context) {
 		},
 	).ToMap(&groupedAnswers)
 
-	surveyScores := make([]models.SurveyScore, 0)
+	surveyScores := make([]*models.SurveyScore, 0)
 	for _, answers := range groupedAnswers {
 		surveyScore := calculatePerQuestionPerSurveyScore(answers)
 		surveyScores = append(surveyScores, surveyScore)
@@ -134,7 +134,7 @@ func calculatePerQuestionPerSurveyScore(scores []*models.ContinuousFeedbackAnswe
 		SurveyName:     scores[0].SurveyName,
 		SurveyId:       scores[0].SurveyId,
 		CFId:           scores[0].ContinuousFeedbackParentId,
-		CFName:         scores[0].CFName,
+		CFName:         scores[0].ContinuousFeedbackName,
 		QuestionScores: questionScoresTotals,
 	}
 }

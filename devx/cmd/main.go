@@ -27,6 +27,9 @@ func main() {
 	ContinuousFeedbackController := controllers.NewContinuousFeedbackController(dbClient)
 	ContinuousFeedbackRouteController := routes.NewContinuousFeedbackRouteController(ContinuousFeedbackController)
 
+	VerticalDataController := controllers.NewVerticalDataController(dbClient)
+	VerticalDataRouteController := routes.NewVerticalDataRoutes(VerticalDataController)
+
 	corsConfig := cors.DefaultConfig()
 	corsConfig.AllowOrigins = []string{"http://localhost:8000", config.ClientOrigin}
 	corsConfig.AllowCredentials = true
@@ -41,5 +44,6 @@ func main() {
 
 	ClassicSurveyRouteController.RegisterRoutes(router)
 	ContinuousFeedbackRouteController.RegisterRoutes(router)
+	VerticalDataRouteController.RegisterRoutes(router)
 	log.Fatal(server.Run(":" + config.ServerPort))
 }

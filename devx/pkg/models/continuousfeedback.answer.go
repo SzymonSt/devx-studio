@@ -3,7 +3,9 @@ package models
 type ContinuousFeedbackAnswer struct {
 	VerticalId                 string                              `json:"verticalId" bson:"verticalId"`
 	ContinuousFeedbackParentId string                              `json:"continuousFeedbackParentId" bson:"continuousFeedbackParentId"`
+	ContinuousFeedbackName     string                              `json:"continuousFeedbackName" bson:"continuousFeedbackName"`
 	SurveyId                   string                              `json:"surveyId" bson:"surveyId"`
+	SurveyName                 string                              `json:"surveyName" bson:"surveyName"`
 	Timestamp                  string                              `json:"timestamp" bson:"timestamp"`
 	Questions                  []ContinuousFeedbackAnswersQuestion `json:"questions" bson:"questions"`
 }
