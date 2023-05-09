@@ -1,0 +1,12 @@
+version: '3'
+services:
+  devx:
+    image: devx/devx:${SERVICE_VERSION}
+    ports:
+      - "${PORT}:${PORT}"
+    networks:
+      - devxnet
+
+networks:
+  devxnet:
+    driver: bridge

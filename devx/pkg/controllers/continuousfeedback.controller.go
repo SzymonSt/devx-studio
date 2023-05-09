@@ -48,7 +48,7 @@ func (cfc *ContinuousFeedbackController) Get(ctx *gin.Context) {
 		})
 	}
 	filter := bson.M{"_id": objectId}
-	err = cfc.dbClient.Database("devx").Collection("continuouseedback").FindOne(ctx, filter).Decode(&continuousFeedback)
+	err = cfc.dbClient.Database("devx").Collection("continuousfeedback").FindOne(ctx, filter).Decode(&continuousFeedback)
 	if err != nil {
 		ctx.JSON(500, gin.H{
 			"message": "Internal server error",

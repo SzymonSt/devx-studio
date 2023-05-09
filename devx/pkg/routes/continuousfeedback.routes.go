@@ -23,4 +23,5 @@ func (ssc *ContinuousFeedbackRouteController) RegisterRoutes(rg *gin.RouterGroup
 	router.POST("/continuousfeedback", ssc.continuousFeedbackController.Create)
 	router.PUT("/continuousfeedback/:id", ssc.continuousFeedbackController.Update)
 	router.DELETE("/continuousfeedback/:id", ssc.continuousFeedbackController.Delete)
+	router.POST("/continuousfeedback/answer", ssc.continuousFeedbackController.PlaceAnswer)
 }
