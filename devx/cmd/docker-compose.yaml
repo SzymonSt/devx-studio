@@ -1,9 +1,9 @@
 version: '3'
 services:
   devx:
-    image: devx/devx:${SERVICE_VERSION}
+    image: devx/devx:v0.0.1
     ports:
-      - "${PORT}:${PORT}"
+      - "8080:8080"
     networks:
       - devxnet
 

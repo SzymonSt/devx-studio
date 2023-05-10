@@ -75,7 +75,7 @@ func (cfc *ContinuousFeedbackController) Create(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(200, gin.H{
-		"message": "Successfully created",
+		"message": "success",
 		"id":      insertResult.InsertedID,
 	})
 }

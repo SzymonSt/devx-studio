@@ -10,7 +10,7 @@ type Config struct {
 
 func LaodConfig() (config Config, err error) {
 	viper.SetConfigName("devx")
-	viper.AddConfigPath("../")
+	viper.AddConfigPath(".")
 	viper.SetConfigType("env")
 	viper.AutomaticEnv()
 
