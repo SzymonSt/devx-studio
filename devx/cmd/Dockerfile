@@ -12,4 +12,5 @@ CMD ["go", "test", "-v", "./cmd/."]
 
 #Target for release
 FROM build as release
-CMD ["./cmd/devx"]
+WORKDIR /app/cmd
+CMD ["./devx"]

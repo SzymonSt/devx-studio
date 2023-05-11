@@ -6,7 +6,7 @@ type ScheduledSurvey struct {
 	Name                       string `json:"name" bson:"name"`
 	LastOpened                 string `json:"lastOpened" bson:"lastOpened"`
 	OpenPeriod                 string `json:"openPeriod" bson:"openPeriod"`
-	Interval                   int    `json:"interval" bson:"interval"`
+	Interval                   string `json:"interval" bson:"interval"`
 	Questions                  []struct {
 		QuestionId                 string `json:"questionId" bson:"questionId"`
 		Question                   string `json:"question" bson:"question"`

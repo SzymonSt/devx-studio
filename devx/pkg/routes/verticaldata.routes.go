@@ -17,6 +17,6 @@ func NewVerticalDataRoutes(verticalDataController controllers.VerticalDataContro
 }
 
 func (vdr *VerticalDataRoutes) RegisterRoutes(rg *gin.RouterGroup) {
-	router := rg.Group("VerticalData")
-	router.GET("/verticaldata/:verticalId", vdr.VerticalDataController.GetVerticalData)
+	router := rg.Group("verticaldata")
+	router.GET("/:verticalId", vdr.VerticalDataController.GetVerticalData)
 }

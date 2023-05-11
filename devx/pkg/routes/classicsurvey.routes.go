@@ -17,10 +17,10 @@ func NewClassicSurveyRouteController(classicSurveyController controllers.Classic
 }
 
 func (ssc *ClassicSurveyRouteController) RegisterRoutes(rg *gin.RouterGroup) {
-	router := rg.Group("classicsurveys")
-	router.GET("/classicsurvey", ssc.classicSurveyController.GetAll)
-	router.GET("/classicsurvey/:id", ssc.classicSurveyController.Get)
-	router.POST("/classicsurvey", ssc.classicSurveyController.Create)
-	router.PUT("/classicsurvey/:id", ssc.classicSurveyController.Update)
-	router.DELETE("/classicsurvey/:id", ssc.classicSurveyController.Delete)
+	router := rg.Group("classicsurvey")
+	router.GET("/", ssc.classicSurveyController.GetAll)
+	router.GET("/:id", ssc.classicSurveyController.Get)
+	router.POST("/", ssc.classicSurveyController.Create)
+	router.PUT("/:id", ssc.classicSurveyController.Update)
+	router.DELETE("/:id", ssc.classicSurveyController.Delete)
 }

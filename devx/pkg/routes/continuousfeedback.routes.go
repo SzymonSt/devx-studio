@@ -17,11 +17,11 @@ func NewContinuousFeedbackRouteController(continuousFeedbackController controlle
 }
 
 func (ssc *ContinuousFeedbackRouteController) RegisterRoutes(rg *gin.RouterGroup) {
-	router := rg.Group("ContinuousFeedbacks")
-	router.GET("/continuousfeedback", ssc.continuousFeedbackController.GetAll)
-	router.GET("/continuousfeedback/:id", ssc.continuousFeedbackController.Get)
-	router.POST("/continuousfeedback", ssc.continuousFeedbackController.Create)
-	router.PUT("/continuousfeedback/:id", ssc.continuousFeedbackController.Update)
-	router.DELETE("/continuousfeedback/:id", ssc.continuousFeedbackController.Delete)
-	router.POST("/continuousfeedback/answer", ssc.continuousFeedbackController.PlaceAnswer)
+	router := rg.Group("continuousfeedback")
+	router.GET("/", ssc.continuousFeedbackController.GetAll)
+	router.GET("/:id", ssc.continuousFeedbackController.Get)
+	router.POST("/", ssc.continuousFeedbackController.Create)
+	router.PUT("/:id", ssc.continuousFeedbackController.Update)
+	router.DELETE("/:id", ssc.continuousFeedbackController.Delete)
+	router.POST("/answer", ssc.continuousFeedbackController.PlaceAnswer)
 }

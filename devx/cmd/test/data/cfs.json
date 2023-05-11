@@ -1,0 +1,54 @@
+[
+    {
+    "name":       "Infra continuous feedback",
+    "verticalId": "infrastruture",
+    "ScheduledSurveys": {
+        "1": {
+            "name":       "IaC Survey",
+            "lastOpened": "",
+            "openPeriod": "48h",
+            "interval":   "0 0 1 * *",
+            "questions": [
+                {
+                    "questionId":                 "1",
+                    "question":                   "How would you rate coverage of IaC modules on most cloud resources provided by Platform Engineering Team?",
+                    "isCalculatedInOverallScore": true
+                },
+                {
+                    "questionId":                 "2",
+                    "question":                   "How would you rate ease of setting up and providing parameters for IaC modules?",
+                    "isCalculatedInOverallScore": true
+                },
+                {
+                    "questionId":                 "3",
+                    "question":                   "How would you rate ease of making changes to development and production environments using IaC modules?",
+                    "isCalculatedInOverallScore": true
+                }
+            ]
+        },
+        "2": {
+            "name":       "Infrastructure observability survey",
+            "lastOpened": "",
+            "openPeriod": "72h",
+            "interval":   "0 0 1 * *",
+            "questions": [
+                {
+                    "questionId":                 "1",
+                    "question":                   "How would you rate quality of infrastructre alerts?",
+                    "isCalculatedInOverallScore": true
+                },
+                {
+                    "questionId":                 "2",
+                    "question":                   "How would you rate ease of debugging infrastructure issues?",
+                    "isCalculatedInOverallScore": true
+                },
+                {
+                    "questionId":                 "3",
+                    "question":                   "How would you rate guides for infrastructure troubleshooting provided by Platform Engineering Team?",
+                    "isCalculatedInOverallScore": false
+                }
+            ]
+        }
+    }
+}
+]

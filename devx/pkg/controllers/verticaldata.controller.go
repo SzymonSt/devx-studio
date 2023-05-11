@@ -26,7 +26,7 @@ func (vdc *VerticalDataController) GetVerticalData(ctx *gin.Context) {
 	answers, err := vdc.collectAnswers(ctx, verticalId)
 	if err != nil {
 		ctx.JSON(500, gin.H{
-			"message": "Internal server error",
+			"message": err.Error(),
 		})
 		return
 	}
@@ -51,9 +51,21 @@ func (vdc *VerticalDataController) GetVerticalData(ctx *gin.Context) {
 			return answer.(*models.ContinuousFeedbackAnswer).SurveyId
 		},
 		func(answer interface{}) interface{} {
-			return answer
+			return answer.(*models.ContinuousFeedbackAnswer)
 		},
-	).ToMap(&groupedAnswers)
+	).ToMapBy(
+		&groupedAnswers,
+		func(group interface{}) interface{} {
+			return group.(Group).Key.(string)
+		},
+		func(group interface{}) interface{} {
+			var answers []*models.ContinuousFeedbackAnswer
+			for _, answer := range group.(Group).Group {
+				answers = append(answers, answer.(*models.ContinuousFeedbackAnswer))
+			}
+			return answers
+		},
+	)
 
 	surveyScores := make([]*models.SurveyScore, 0)
 	for _, answers := range groupedAnswers {
@@ -112,9 +124,20 @@ func calculatePerQuestionPerSurveyScore(scores []*models.ContinuousFeedbackAnswe
 				return question.(*models.ContinuousFeedbackAnswersQuestion).QuestionId
 			},
 			func(question interface{}) interface{} {
-				return question
+				return question.(*models.ContinuousFeedbackAnswersQuestion)
 			},
-		).ToMap(&groupedQuestionScores)
+		).ToMapBy(&groupedQuestionScores,
+			func(group interface{}) interface{} {
+				return group.(Group).Key.(string)
+			},
+			func(group interface{}) interface{} {
+				var questions []*models.ContinuousFeedbackAnswersQuestion
+				for _, question := range group.(Group).Group {
+					questions = append(questions, question.(*models.ContinuousFeedbackAnswersQuestion))
+				}
+				return questions
+			},
+		)
 
 		for qid, question := range groupedQuestionScores {
 			questionScores := make([]float64, 0)

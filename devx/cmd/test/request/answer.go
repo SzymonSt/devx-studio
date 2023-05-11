@@ -1,15 +1,13 @@
-package models
-
-import "go.mongodb.org/mongo-driver/bson/primitive"
+package request
 
 type ContinuousFeedbackAnswer struct {
-	Id                         primitive.ObjectID                   `json:"id" bson:"_id" omitempty:"true"`
+	Id                         string                               `json:"id" bson:"_id" omitempty:"true"`
 	VerticalId                 string                               `json:"verticalId" bson:"verticalId"`
 	ContinuousFeedbackParentId string                               `json:"continuousFeedbackParentId" bson:"continuousFeedbackParentId"`
 	ContinuousFeedbackName     string                               `json:"continuousFeedbackName" bson:"continuousFeedbackName"`
 	SurveyId                   string                               `json:"surveyId" bson:"surveyId"`
 	SurveyName                 string                               `json:"surveyName" bson:"surveyName"`
-	Timestamp                  primitive.DateTime                   `json:"timestamp" bson:"timestamp"`
+	Timestamp                  string                               `json:"timestamp" bson:"timestamp"`
 	Questions                  []*ContinuousFeedbackAnswersQuestion `json:"questions" bson:"questions"`
 }
 
