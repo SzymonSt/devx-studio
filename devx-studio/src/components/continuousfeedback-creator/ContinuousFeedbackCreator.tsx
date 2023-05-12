@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DataSource from "../continuousfeedback-components/DataSource";
 import { Form } from "react-bootstrap";
+import { ContinuousFeedback } from "../../interafces/continuousfeedback";
 
 type ContinuousFeedbackCreatorProps = {
     isVisible: boolean;
@@ -13,6 +14,7 @@ const ContinuousFeedbackCreator: React.FC<ContinuousFeedbackCreatorProps> = ({is
     const childRefs = useRef<Array<any>>([]);
     const [sources, setSources] = useState<JSX.Element[]>([]);
     const [selectedVerticalOption, setSelectedVerticalOption] = useState<string>("");
+    const [continuousfeedback, setContinuousFeedback] = useState<ContinuousFeedback>({} as ContinuousFeedback);
 
     const handleVerticalChange = (event: React.ChangeEvent<HTMLSelectElement>) => {   
         childRefs.current.forEach((childRef) => {
@@ -47,6 +49,10 @@ const ContinuousFeedbackCreator: React.FC<ContinuousFeedbackCreatorProps> = ({is
         });
     }
 
+    const saveCF = () => {
+        
+    }
+
     if (!isVisible) {
         return null;
     }
@@ -74,7 +80,7 @@ const ContinuousFeedbackCreator: React.FC<ContinuousFeedbackCreatorProps> = ({is
                     <option value="growth">Growth/Upskill</option>
                     <option value="wellbeing">Wellbeing</option>
             </Form.Select>
-            <button className="btn btn-success save">Save</button>
+            <button onClick={()=> saveCF()} className="btn btn-success save">Save</button>
             </div>
             <div className="sources">
                 {renderSources()}

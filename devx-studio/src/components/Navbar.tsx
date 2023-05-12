@@ -1,5 +1,5 @@
 import React from "react";
-import { MdOutlineSpaceDashboard, MdLoop } from 'react-icons/md';
+import { MdOutlineSpaceDashboard, MdLoop, MdOutlinePeople, MdOutlineNewLabel } from 'react-icons/md';
 import {RiSurveyLine, RiTodoLine} from 'react-icons/ri';
 import "./Navbar.css"
 
@@ -14,6 +14,8 @@ function Navbar() {
                 <h3><a href="/feed"><MdLoop /></a></h3>
                 <h3><a href="/classic-survey"><RiSurveyLine /></a></h3>
                 <h3><a href="/backlog"><RiTodoLine /></a></h3>
+                <h3><a href="/teams"><MdOutlinePeople /></a></h3>
+                <h3><a href="/tags"><MdOutlineNewLabel /></a></h3>
             </div>
         </div>
     )
