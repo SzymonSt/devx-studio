@@ -12,7 +12,7 @@ export interface ContinuousFeedback{
 export interface ScheduledSurvey{
     id: string;
     name: string;
-    lastOpened: Date;
+    lastOpened: string;
     openPeriod: string;
     interval: string;
     responseRate: number;
@@ -26,7 +26,8 @@ export interface AudienceItem{
     id: string;
 }
 export interface Question{
-    questionId: string;
+    id: string;
     question: string;
+    description?: string;
     isCalculatedInOverallScore: boolean;
 }

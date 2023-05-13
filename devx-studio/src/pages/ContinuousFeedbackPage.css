@@ -1,3 +1,15 @@
 .btn{
     margin: 2vw;
 }
+
+.feedbacks{
+    padding: 2%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-gap: 1vw;
+}
+.feedback{
+    padding: 2%;
+    width: 30vw;
+    background-color:  rgb(68, 185, 168);
+}

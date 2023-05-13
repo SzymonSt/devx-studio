@@ -1,4 +1,4 @@
-import React, {useState, useRef} from "react";
+import React, {useState, useRef, useEffect} from "react";
 import "./ContinuousFeedbackCreator.css";
 import ReactDOM from 'react-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -8,9 +8,10 @@ import { ContinuousFeedback } from "../../interafces/continuousfeedback";
 
 type ContinuousFeedbackCreatorProps = {
     isVisible: boolean;
+    feedback?: ContinuousFeedback;
 }
 
-const ContinuousFeedbackCreator: React.FC<ContinuousFeedbackCreatorProps> = ({isVisible}) => {
+const ContinuousFeedbackCreator: React.FC<ContinuousFeedbackCreatorProps> = ({isVisible, feedback}) => {
     const childRefs = useRef<Array<any>>([]);
     const [sources, setSources] = useState<JSX.Element[]>([]);
     const [selectedVerticalOption, setSelectedVerticalOption] = useState<string>("");
@@ -53,12 +54,24 @@ const ContinuousFeedbackCreator: React.FC<ContinuousFeedbackCreatorProps> = ({is
         
     }
 
+    useEffect(() => {
+        if(feedback?.id != undefined){
+            setSelectedVerticalOption(feedback.verticalId);
+            setContinuousFeedback(feedback);
+        }else {
+            setSelectedVerticalOption("");
+            setContinuousFeedback({name: "New Continuous Feedback"} as ContinuousFeedback); 
+        }
+
+      }, [isVisible]);
+
     if (!isVisible) {
         return null;
     }
     return ReactDOM.createPortal(
         <div className="cf-creator">
             <div className="cf-cretor-header">
+            <h2>{continuousfeedback.name}</h2>
             <Dropdown>
                 <Dropdown.Toggle variant="primary" id="dropdown-basic">
                     Datasource
