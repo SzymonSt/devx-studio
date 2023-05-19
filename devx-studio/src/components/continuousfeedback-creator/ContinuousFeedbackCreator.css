@@ -5,5 +5,25 @@
     position: fixed;
     top: 12%;
     left: 32%;
-    background-color: rgb(34, 200, 79);
+    background-color: rgb(206, 206, 206);
+}
+.cf-cretor-header{
+    display: flex !important;
+}
+.source{
+    width: 85%;
+    margin: auto;
+    margin-top: 2%;
+}
+.sources{
+    overflow: auto;
+    height: 85%;
+}
+.save{
+    position: sticky;
+    left: 70%;
+}
+.vertical-select{
+    margin-top: 5%;
+    height: 35%;
 }

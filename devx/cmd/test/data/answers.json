@@ -1,0 +1,115 @@
+[
+    {
+        "verticalId":                 "infrastruture",
+        "continuousFeedbackParentId": "",
+        "continuousFeedbackName":     "Infra continuous feedback",
+        "surveyId":                   "1",
+        "surveyName":                 "IaC Survey",
+        "timestamp":                  "",
+        "questions": [
+            {
+                "questionId":                 "1",
+                "question":                   "How would you rate coverage of IaC modules on most cloud resources provided by Platform Engineering Team?",
+                "score":                      4.5,
+                "isCalculatedInOverallScore": true
+            },
+            {
+                "questionId":                 "2",
+                "question":                   "How would you rate ease of setting up and providing parameters for IaC modules?",
+                "score":                      3.5,
+                "isCalculatedInOverallScore": true
+            },
+            {
+                "questionId":                 "3",
+                "question":                   "How would you rate ease of making changes to development and production environments using IaC modules?",
+                "score":                      4.0,
+                "isCalculatedInOverallScore": true
+            }
+        ]
+    },
+    {
+        "verticalId":                 "infrastruture",
+        "continuousFeedbackParentId": "",
+        "continuousFeedbackName":     "Infra continuous feedback",
+        "surveyId":                   "1",
+        "surveyName":                 "IaC Survey",
+        "timestamp":                  "",
+        "questions": [
+                {
+                    "questionId":                 "1",
+                    "question":                   "How would you rate coverage of IaC modules on most cloud resources provided by Platform Engineering Team?",
+                    "score":                      4.5,
+                    "isCalculatedInOverallScore": true
+                },
+                {
+                    "questionId":                 "2",
+                    "question":                   "How would you rate ease of setting up and providing parameters for IaC modules?",
+                    "score":                      3.5,
+                    "isCalculatedInOverallScore": true
+                },
+                {
+                    "questionId":                 "3",
+                    "question":                   "How would you rate ease of making changes to development and production environments using IaC modules?",
+                    "score":                      4.0,
+                    "isCalculatedInOverallScore": true
+                }
+            ]
+        },
+        {
+            "verticalId":                 "infrastruture",
+            "continuousFeedbackParentId": "",
+            "continuousFeedbackName":     "Infra continuous feedback",
+            "surveyId":                   "1",
+            "surveyName":                 "IaC Survey",
+            "timestamp":                  "",
+            "questions": [
+                    {
+                        "questionId":                 "1",
+                        "question":                   "How would you rate coverage of IaC modules on most cloud resources provided by Platform Engineering Team?",
+                        "score":                      4.5,
+                        "isCalculatedInOverallScore": true
+                    },
+                    {
+                        "questionId":                 "2",
+                        "question":                   "How would you rate ease of setting up and providing parameters for IaC modules?",
+                        "score":                      3.5,
+                        "isCalculatedInOverallScore": true
+                    },
+                    {
+                        "questionId":                 "3",
+                        "question":                   "How would you rate ease of making changes to development and production environments using IaC modules?",
+                        "score":                      4.0,
+                        "isCalculatedInOverallScore": true
+                    }
+                ]
+        },
+        {
+            "verticalId":                 "infrastruture",
+            "continuousFeedbackParentId": "",
+            "continuousFeedbackName":     "Infra continuous feedback",
+            "surveyId":                   "1",
+            "surveyName":                 "IaC Survey",
+            "timestamp":                  "",
+            "questions": [
+                    {
+                        "questionId":                 "1",
+                        "question":                   "How would you rate coverage of IaC modules on most cloud resources provided by Platform Engineering Team?",
+                        "score":                      4.5,
+                        "isCalculatedInOverallScore": true
+                    },
+                    {
+                        "questionId":                 "2",
+                        "question":                   "How would you rate ease of setting up and providing parameters for IaC modules?",
+                        "score":                      3.5,
+                        "isCalculatedInOverallScore": true
+                    },
+                    {
+                        "questionId":                 "3",
+                        "question":                   "How would you rate ease of making changes to development and production environments using IaC modules?",
+                        "score":                      4.0,
+                        "isCalculatedInOverallScore": true
+                    }
+                ]
+        }
+        
+]
