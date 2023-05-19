@@ -3,17 +3,20 @@ import "./ContinuousFeedbackCreator.css";
 import ReactDOM from 'react-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DataSource from "../continuousfeedback-components/DataSource";
-import { Form } from "react-bootstrap";
-import { ContinuousFeedback } from "../../interafces/continuousfeedback";
+import { Form, FormText } from "react-bootstrap";
+import { ContinuousFeedback, ScheduledSurvey } from "../../interafces/continuousfeedback";
 
 type ContinuousFeedbackCreatorProps = {
     isVisible: boolean;
     feedback?: ContinuousFeedback;
+    visibilityHandler: (isVisible: boolean) => void;
 }
 
-const ContinuousFeedbackCreator: React.FC<ContinuousFeedbackCreatorProps> = ({isVisible, feedback}) => {
+const ContinuousFeedbackCreator: React.FC<ContinuousFeedbackCreatorProps> = ({isVisible, feedback, visibilityHandler}) => {
+    const apiUri = process.env.REACT_APP_API_URI;
     const childRefs = useRef<Array<any>>([]);
     const [sources, setSources] = useState<JSX.Element[]>([]);
+    const [scheduledSurveys, setScheduledSurveys] = useState<ScheduledSurvey[]>([]);
     const [selectedVerticalOption, setSelectedVerticalOption] = useState<string>("");
     const [continuousfeedback, setContinuousFeedback] = useState<ContinuousFeedback>({} as ContinuousFeedback);
 
@@ -26,41 +29,78 @@ const ContinuousFeedbackCreator: React.FC<ContinuousFeedbackCreatorProps> = ({is
 
     const addSource = (type: string) => {
         var name  = "New_" + type + (sources.length);
-        setSources([...sources, 
-            <DataSource type={type} name={name} 
-                    index={sources.length}
-                    onRemove={removeSource} />]);
+        setScheduledSurveys([...scheduledSurveys, 
+            {
+                id: "",
+                name: name,
+                lastOpened: "",
+                openPeriod: "",
+                interval: "",
+                responseRate: 0.22,
+                audience: [],
+                questions: [],
+            }
+        ]);
     }
 
-    const removeSource = (index: number) => {
-        const newSources = [...sources];
-        newSources.splice(index, 1);
-        setSources(newSources);
+    const removeSource = (index: string) => {
     }
 
-    const renderSources = () => {
-        return sources.map((source, index) => {
+    const renderScheduledSurveys = () => {
+        return scheduledSurveys.map((survey, index) => {
             return (
-                <div className="source" key={index}>
-                    <div className="source-body">
-                        {source}
-                    </div>
-                </div>
+                <DataSource type={"scheduledsurvey"} name={survey.name} 
+                index={survey.id}
+                onRemove={removeSource} />
             );
         });
     }
 
-    const saveCF = () => {
-        
+    const saveCF = async() => {
+        console.log(continuousfeedback);
+        continuousfeedback.scheduledSurveys = scheduledSurveys;
+        continuousfeedback.verticalId = selectedVerticalOption;
+        continuousfeedback.id ? updateCF() : createCF();
+        closeCFComponent();
+    }
+
+    const updateCF = async() => {
+        console.log("update")
+        const resp = await fetch(apiUri + "/continuousfeedback/" + continuousfeedback.id ,{
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(continuousfeedback)
+        });
+        resp.ok ? console.log(resp.status + "|" + resp.statusText) : console.log("ERROR: " + resp.status + "|" + resp.statusText);
+    }
+
+    const createCF = async() => {
+        console.log("create")
+        const resp = await fetch(apiUri + "/continuousfeedback/",{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(continuousfeedback)
+        });
+        resp.ok ? console.log(resp.status + "|" + resp.statusText) : console.log("ERROR: " + resp.status + "|" + resp.statusText);
+    }
+
+    const closeCFComponent = () => {
+        visibilityHandler(false);
     }
 
     useEffect(() => {
         if(feedback?.id != undefined){
             setSelectedVerticalOption(feedback.verticalId);
             setContinuousFeedback(feedback);
+            setScheduledSurveys(feedback.scheduledSurveys);
         }else {
             setSelectedVerticalOption("");
             setContinuousFeedback({name: "New Continuous Feedback"} as ContinuousFeedback); 
+            setScheduledSurveys([]);
         }
 
       }, [isVisible]);
@@ -96,7 +136,7 @@ const ContinuousFeedbackCreator: React.FC<ContinuousFeedbackCreatorProps> = ({is
             <button onClick={()=> saveCF()} className="btn btn-success save">Save</button>
             </div>
             <div className="sources">
-                {renderSources()}
+                {renderScheduledSurveys()}
             </div>
         </div>, document.getElementById('root')! as HTMLElement
     );

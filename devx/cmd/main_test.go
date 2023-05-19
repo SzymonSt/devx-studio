@@ -94,51 +94,61 @@ func TestCreateDeleteContinuousFeedback(t *testing.T) {
 	method := "POST"
 	url := "http://localhost:8080/api/continuousfeedback"
 	body := request.ContinuousFeedback{
-		Name:       "Infra continuous feedback",
-		VerticalId: "infrastruture",
-		ScheduledSurveys: map[string]request.ScheduledSurvey{
-			"1": {
-				Name:       "IaC Survey",
-				LastOpened: "",
-				OpenPeriod: "48h",
-				Interval:   "0 0 1 * *", //random cron
+		Name:              "Infra continuous feedback",
+		VerticalId:        "infrastruture",
+		IsCurrentlyActive: true,
+		ResponsRate:       0.66,
+		ScheduledSurveys: []request.ScheduledSurvey{
+			{
+				Name:         "IaC Survey",
+				LastOpened:   "",
+				OpenPeriod:   "48h",
+				ResponseRate: 0.5,
+				Interval:     "0 0 1 * *", //random cron
 				Questions: []request.Question{
 					{
-						QuestionId:                 "1",
+						Id:                         "1",
 						Question:                   "How would you rate coverage of IaC modules on most cloud resources provided by Platform Engineering Team?",
+						Description:                "Sample Description",
 						IsCalculatedInOverallScore: true,
 					},
 					{
-						QuestionId:                 "2",
+						Id:                         "2",
 						Question:                   "How would you rate ease of setting up and providing parameters for IaC modules?",
+						Description:                "Sample Description",
 						IsCalculatedInOverallScore: true,
 					},
 					{
-						QuestionId:                 "3",
+						Id:                         "3",
 						Question:                   "How would you rate ease of making changes to development and production environments using IaC modules?",
+						Description:                "Sample Description",
 						IsCalculatedInOverallScore: true,
 					},
 				},
 			},
-			"2": {
-				Name:       "Infrastructure observability survey",
-				LastOpened: "",
-				OpenPeriod: "72h",
-				Interval:   "0 0 1 * *", //random cron
+			{
+				Name:         "Infrastructure observability survey",
+				LastOpened:   "",
+				OpenPeriod:   "72h",
+				ResponseRate: 0.5,
+				Interval:     "0 0 1 * *", //random cron
 				Questions: []request.Question{
 					{
-						QuestionId:                 "1",
+						Id:                         "1",
 						Question:                   "How would you rate quality of infrastructre alerts?",
+						Description:                "Sample Description",
 						IsCalculatedInOverallScore: true,
 					},
 					{
-						QuestionId:                 "2",
+						Id:                         "2",
 						Question:                   "How would you rate ease of debugging infrastructure issues?",
+						Description:                "Sample Description",
 						IsCalculatedInOverallScore: true,
 					},
 					{
-						QuestionId:                 "3",
+						Id:                         "3",
 						Question:                   "How would you rate guides for infrastructure troubleshooting provided by Platform Engineering Team?",
+						Description:                "Sample Description",
 						IsCalculatedInOverallScore: false,
 					},
 				},
@@ -217,51 +227,61 @@ func TestAddAnswerContinuousFeedback(t *testing.T) {
 	method := "POST"
 	url := "http://localhost:8080/api/continuousfeedback"
 	body := request.ContinuousFeedback{
-		Name:       "Infra continuous feedback",
-		VerticalId: "infrastruture",
-		ScheduledSurveys: map[string]request.ScheduledSurvey{
-			"1": {
-				Name:       "IaC Survey",
-				LastOpened: "",
-				OpenPeriod: "48h",
-				Interval:   "0 0 1 * *", //random cron
+		Name:              "Infra continuous feedback",
+		VerticalId:        "infrastruture",
+		IsCurrentlyActive: true,
+		ResponsRate:       0.66,
+		ScheduledSurveys: []request.ScheduledSurvey{
+			{
+				Name:         "IaC Survey",
+				LastOpened:   "",
+				OpenPeriod:   "48h",
+				ResponseRate: 0.5,
+				Interval:     "0 0 1 * *", //random cron
 				Questions: []request.Question{
 					{
-						QuestionId:                 "1",
+						Id:                         "1",
 						Question:                   "How would you rate coverage of IaC modules on most cloud resources provided by Platform Engineering Team?",
+						Description:                "Sample Description",
 						IsCalculatedInOverallScore: true,
 					},
 					{
-						QuestionId:                 "2",
+						Id:                         "2",
 						Question:                   "How would you rate ease of setting up and providing parameters for IaC modules?",
+						Description:                "Sample Description",
 						IsCalculatedInOverallScore: true,
 					},
 					{
-						QuestionId:                 "3",
+						Id:                         "3",
 						Question:                   "How would you rate ease of making changes to development and production environments using IaC modules?",
+						Description:                "Sample Description",
 						IsCalculatedInOverallScore: true,
 					},
 				},
 			},
-			"2": {
-				Name:       "Infrastructure observability survey",
-				LastOpened: "",
-				OpenPeriod: "72h",
-				Interval:   "0 0 1 * *", //random cron
+			{
+				Name:         "Infrastructure observability survey",
+				LastOpened:   "",
+				OpenPeriod:   "72h",
+				ResponseRate: 0.5,
+				Interval:     "0 0 1 * *", //random cron
 				Questions: []request.Question{
 					{
-						QuestionId:                 "1",
+						Id:                         "1",
 						Question:                   "How would you rate quality of infrastructre alerts?",
+						Description:                "Sample Description",
 						IsCalculatedInOverallScore: true,
 					},
 					{
-						QuestionId:                 "2",
+						Id:                         "2",
 						Question:                   "How would you rate ease of debugging infrastructure issues?",
+						Description:                "Sample Description",
 						IsCalculatedInOverallScore: true,
 					},
 					{
-						QuestionId:                 "3",
+						Id:                         "3",
 						Question:                   "How would you rate guides for infrastructure troubleshooting provided by Platform Engineering Team?",
+						Description:                "Sample Description",
 						IsCalculatedInOverallScore: false,
 					},
 				},
@@ -321,7 +341,7 @@ func TestAddAnswerContinuousFeedback(t *testing.T) {
 		ContinuousFeedbackParentId: getResult["id"].(string),
 		ContinuousFeedbackName:     getResult["name"].(string),
 		SurveyId:                   "1",
-		SurveyName:                 getResult["scheduledSurveys"].(map[string]interface{})["1"].(map[string]interface{})["name"].(string),
+		SurveyName:                 getResult["scheduledSurveys"].([]interface{})[0].(map[string]interface{})["name"].(string),
 		Timestamp:                  time.Now().UTC().Format(time.RFC3339),
 		Questions: []*request.ContinuousFeedbackAnswersQuestion{
 			{
@@ -365,6 +385,32 @@ func TestAddAnswerContinuousFeedback(t *testing.T) {
 	if answerResult["message"] != "success" {
 		t.Errorf("Expected status success, got %s", answerResult["message"])
 	}
+}
+
+//	1. test GET /continuousfeedback
+func TestGetAll(t *testing.T) {
+	client := http.Client{}
+
+	//1. test GET /continuousfeedback
+	method := "GET"
+	url := "http://localhost:8080/api/continuousfeedback"
+	req, err := http.NewRequest(method, url, nil)
+	if err != nil {
+		panic(err)
+	}
+	res, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	if res.StatusCode != 200 {
+		t.Errorf("Expected status 200, got %d, %s", res.StatusCode, res.Status)
+	}
+	var getResult []map[string]interface{}
+	json.NewDecoder(res.Body).Decode(&getResult)
+	if len(getResult) < 1 {
+		t.Errorf("Expected at least 1 continuous feedback, got %d", len(getResult))
+	}
+
 }
 
 //---Test cases for VerticalDataController
@@ -418,12 +464,12 @@ func TestGetVerticalData(t *testing.T) {
 	var answers []request.ContinuousFeedbackAnswer
 	json.Unmarshal(byteValueAnswer, &answers)
 	for _, answer := range answers {
+		answer.ContinuousFeedbackParentId = cfId
+		answer.Timestamp = time.Now().UTC().Format(time.RFC3339)
 		payload, err := json.Marshal(answer)
 		if err != nil {
 			panic(err)
 		}
-		answer.ContinuousFeedbackParentId = cfId
-		answer.Timestamp = time.Now().UTC().Format(time.RFC3339)
 		req, err := http.NewRequest("POST", "http://localhost:8080/api/continuousfeedback/answer", bytes.NewBuffer(payload))
 		if err != nil {
 			panic(err)
@@ -455,5 +501,4 @@ func TestGetVerticalData(t *testing.T) {
 	}
 	var verticalDataResult map[string]interface{}
 	json.NewDecoder(res.Body).Decode(&verticalDataResult)
-	fmt.Printf("verticalDataResult: %v\n", verticalDataResult)
 }

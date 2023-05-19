@@ -2,12 +2,15 @@
     {
     "name":       "Infra continuous feedback",
     "verticalId": "infrastruture",
-    "ScheduledSurveys": {
-        "1": {
+    "isCurrentlyActive": true,
+    "responseRate": 0.00,
+    "ScheduledSurveys": [
+        {
             "name":       "IaC Survey",
             "lastOpened": "",
             "openPeriod": "48h",
             "interval":   "0 0 1 * *",
+            "responseRate": 0.00,
             "questions": [
                 {
                     "questionId":                 "1",
@@ -26,11 +29,12 @@
                 }
             ]
         },
-        "2": {
+        {
             "name":       "Infrastructure observability survey",
             "lastOpened": "",
             "openPeriod": "72h",
             "interval":   "0 0 1 * *",
+            "responseRate": 0.00,
             "questions": [
                 {
                     "questionId":                 "1",
@@ -49,6 +53,6 @@
                 }
             ]
         }
-    }
+    ]
 }
 ]

@@ -6,8 +6,8 @@ import Integration from "./integartion/Integration";
 type DataSourceProps = {
     type: string;
     name: string;
-    index: number;
-    onRemove: (i: number) => void;
+    index: string;
+    onRemove: (i: string) => void;
 }
 
 const DataSource: React.FC<DataSourceProps> = ({type, name, index, onRemove}) => {

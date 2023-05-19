@@ -6,8 +6,8 @@ import { Form } from "react-bootstrap";
 
 type ScheduledSurveyProps = {
     name: string;
-    index: number;
-    onRemove: (i: number) => void;
+    index: string;
+    onRemove: (i: string) => void;
 }
 
 const ScheduledSurvey: React.FC<ScheduledSurveyProps> = ({name, index, onRemove}) => {

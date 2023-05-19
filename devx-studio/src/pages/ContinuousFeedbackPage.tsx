@@ -6,6 +6,7 @@ import ContinuousFeedbackCreator from "../components/continuousfeedback-creator/
 import { mockResponse } from "../mocks/continuousfeedback";
 import { Card } from "react-bootstrap";
 import ContinuousFeedbackCard from "../components/continuousfeedback-components/continuousfeedback-card/ContinuousFeedbackCard";
+import { c } from "msw/lib/glossary-de6278a9";
 
 function ContinuousFeedbackPage() {
     const apiUri = process.env.REACT_APP_API_URI;
@@ -18,32 +19,34 @@ function ContinuousFeedbackPage() {
         setFocusedFeedback(focusedFeedback);
     }
     const fetchContinuousFeedbacks = async() => {
-        await fetch(apiUri + "/continuousfeedback",{method: 'GET'})
+        await fetch(apiUri + "/continuousfeedback/",{method: 'GET'})
         .then(res => res.json())
         .then(
             (result) => {
                 setContinuousFeedbacks(result);
             }
+            
         )
         .catch((error) => {
             console.log(error);
         })
+        console.log(continuousFeedbacks);
     }
 
     useEffect(() => {
-        setContinuousFeedbacks(mockResponse);
-        //fetchContinuousFeedbacks();
+        //setContinuousFeedbacks(mockResponse);
+        fetchContinuousFeedbacks();
       }, []);
     return (
         <div>
             <PageHeader title="Continuous Feedback" />
             <div>
                 <button onClick={()=>toggleModal({} as ContinuousFeedback)} className="btn">Create New Stream</button>
-                <ContinuousFeedbackCreator isVisible={isModalVisible} feedback={focusedFeedback} />
+                <ContinuousFeedbackCreator isVisible={isModalVisible} feedback={focusedFeedback} visibilityHandler={setModalVisibility}/>
             </div>
             <div className="feedbacks">
                 {continuousFeedbacks.map((feedback) => (
-                    <ContinuousFeedbackCard toggleModalVisibility={toggleModal} feedback={feedback} />
+                    <ContinuousFeedbackCard key={feedback.id} toggleModalVisibility={toggleModal} feedback={feedback} />
                     ))}
             </div>
         </div>

@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"devx/pkg/models"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -22,17 +21,17 @@ func NewContinuousFeedbackController(db *mongo.Client) ContinuousFeedbackControl
 
 func (cfc *ContinuousFeedbackController) GetAll(ctx *gin.Context) {
 	var continuousFeedback []models.ContinuousFeedback
-	cursor, err := cfc.dbClient.Database("devx").Collection("continuousfeedback").Find(ctx, nil)
+	cursor, err := cfc.dbClient.Database("devx").Collection("continuousfeedback").Find(ctx, bson.M{})
 	if err != nil {
 		ctx.JSON(500, gin.H{
-			"message": "Internal server error",
+			"message": err.Error(),
 		})
 		return
 	}
 	err = cursor.All(ctx, &continuousFeedback)
 	if err != nil {
 		ctx.JSON(500, gin.H{
-			"message": "Internal server error",
+			"message": err.Error(),
 		})
 		return
 	}
@@ -152,7 +151,6 @@ func (cfc *ContinuousFeedbackController) PlaceAnswer(ctx *gin.Context) {
 		})
 		return
 	}
-	fmt.Println(insertResult)
 	ctx.JSON(200, gin.H{
 		"message": "success",
 		"id":      insertResult.InsertedID,

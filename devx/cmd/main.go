@@ -31,8 +31,8 @@ func main() {
 	VerticalDataRouteController := routes.NewVerticalDataRoutes(VerticalDataController)
 
 	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowOrigins = []string{"http://localhost:8080", config.ClientOrigin}
-	corsConfig.AllowCredentials = true
+	corsConfig.AllowOrigins = []string{"*"}
+	//corsConfig.AllowCredentials = true
 
 	server.Use(cors.New(corsConfig))
 
