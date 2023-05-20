@@ -1,0 +1,37 @@
+.question-box{
+    display: grid;
+    align-items: start;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas: 
+        'a b z'
+        'a c z'
+        'a d z';
+    margin: 2vw;
+    align-items: center;
+}
+.answer-range{
+    width: 12vw;
+    grid-area: d;
+    margin: auto;
+}
+.main-question-text{
+    width: fit-content;
+    background-color: bisque;
+    grid-area: b;
+    margin: auto;
+}
+.sub-question-text{
+    background-color:beige;
+    width: fit-content;
+    grid-area: c;
+    margin: auto;
+    font-size: small;
+}
+.submit-survey{
+    margin: auto;
+    position: relative;
+    left: 47%;
+}
+.questions{
+
+}
