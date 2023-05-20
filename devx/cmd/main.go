@@ -32,7 +32,7 @@ func main() {
 
 	corsConfig := cors.DefaultConfig()
 	corsConfig.AllowOrigins = []string{"*"}
-	//corsConfig.AllowCredentials = true
+	corsConfig.AllowCredentials = true
 
 	server.Use(cors.New(corsConfig))
 
