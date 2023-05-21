@@ -139,7 +139,7 @@ func (cfc *ContinuousFeedbackController) PlaceAnswer(ctx *gin.Context) {
 	err := ctx.BindJSON(&answer)
 	if err != nil {
 		ctx.JSON(400, gin.H{
-			"message": "Invalid request body",
+			"message": err.Error(),
 		})
 		return
 	}

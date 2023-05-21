@@ -29,5 +29,6 @@ export interface Question{
     id: string;
     question: string;
     description?: string;
+    score: number;
     isCalculatedInOverallScore: boolean;
 }
