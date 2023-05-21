@@ -12,14 +12,16 @@ import (
 )
 
 type SchedulerController struct {
-	dbClient *mongo.Client
-	cron     *cron.Cron
+	dbClient  *mongo.Client
+	cron      *cron.Cron
+	slackHook string
 }
 
-func NewSchedulerController(dbClient *mongo.Client, cron *cron.Cron) SchedulerController {
+func NewSchedulerController(dbClient *mongo.Client, cron *cron.Cron, slackHook string) SchedulerController {
 	return SchedulerController{
-		dbClient: dbClient,
-		cron:     cron,
+		dbClient:  dbClient,
+		cron:      cron,
+		slackHook: slackHook,
 	}
 }
 
@@ -35,7 +37,7 @@ func (sc *SchedulerController) CreateOrUpdateJob(ctx *gin.Context) {
 	singleResult := sc.dbClient.Database("devx-scheduler").Collection("jobs").FindOne(ctx, filter)
 	if singleResult.Err() == mongo.ErrNoDocuments {
 		job.Id = primitive.NewObjectID()
-		jId, err := sc.cron.AddFunc(job.Cron, func() { jobs.ProcessScheduledSurvey(job.CfId, job.SurveyId, sc.dbClient) })
+		jId, err := sc.cron.AddFunc(job.Cron, func() { jobs.ProcessScheduledSurvey(job.CfId, job.SurveyId, sc.dbClient, sc.slackHook) })
 		if err != nil {
 			ctx.JSON(500, gin.H{
 				"message": "Internal server error",
@@ -55,7 +57,7 @@ func (sc *SchedulerController) CreateOrUpdateJob(ctx *gin.Context) {
 		singleResult.Decode(&oldJob)
 		id := cron.EntryID(oldJob.JobId)
 		sc.cron.Remove(id)
-		jId, err := sc.cron.AddFunc(job.Cron, func() { jobs.ProcessScheduledSurvey(job.CfId, job.SurveyId, sc.dbClient) })
+		jId, err := sc.cron.AddFunc(job.Cron, func() { jobs.ProcessScheduledSurvey(job.CfId, job.SurveyId, sc.dbClient, sc.slackHook) })
 		if err != nil {
 			ctx.JSON(500, gin.H{
 				"message": "Internal server error",

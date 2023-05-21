@@ -36,7 +36,7 @@ func main() {
 	if err != nil {
 		fmt.Println("[ERROR]" + err.Error())
 	}
-	err = loadExistingJobs(c, mongoClient)
+	err = loadExistingJobs(c, mongoClient, config.SlackHook)
 	if err != nil {
 		fmt.Println("[ERROR]" + err.Error())
 	}
@@ -47,7 +47,7 @@ func main() {
 	corsConfig.AllowCredentials = true
 	server.Use(cors.New(corsConfig))
 
-	schedulerController := controllers.NewSchedulerController(mongoClient, c)
+	schedulerController := controllers.NewSchedulerController(mongoClient, c, config.SlackHook)
 	schedulerRouteController := routes.NewSchedulerRoutes(schedulerController)
 
 	router := server.Group("/api")
@@ -63,7 +63,7 @@ func main() {
 
 }
 
-func loadExistingJobs(c *cron.Cron, m *mongo.Client) (err error) {
+func loadExistingJobs(c *cron.Cron, m *mongo.Client, slackHook string) (err error) {
 	var fetchedJobs []models.Job
 	getResult, err := m.Database("devx-scheduler").Collection("jobs").Find(context.Background(), bson.M{})
 	if err != nil {
@@ -74,7 +74,7 @@ func loadExistingJobs(c *cron.Cron, m *mongo.Client) (err error) {
 		return err
 	}
 	for _, job := range fetchedJobs {
-		jId, err := c.AddFunc(job.Cron, func() { jobs.ProcessScheduledSurvey(job.CfId, job.SurveyId, m) })
+		jId, err := c.AddFunc(job.Cron, func() { jobs.ProcessScheduledSurvey(job.CfId, job.SurveyId, m, slackHook) })
 		if err != nil {
 			return err
 		}

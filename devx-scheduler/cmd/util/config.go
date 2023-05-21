@@ -6,6 +6,7 @@ type Config struct {
 	ServerPort   string
 	ClientOrigin string
 	DBUri        string
+	SlackHook    string
 }
 
 func LaodConfig() (config Config, err error) {

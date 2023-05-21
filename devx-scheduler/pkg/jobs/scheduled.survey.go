@@ -1,8 +1,11 @@
 package jobs
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -10,8 +13,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func ProcessScheduledSurvey(cfId string, surveyId string, mongoClient *mongo.Client) {
+func ProcessScheduledSurvey(cfId string, surveyId string, mongoClient *mongo.Client, slackHook string) {
 	fmt.Println("===Processing scheduled survey===")
+	client := http.Client{}
 	var continuousFeedback map[string]interface{}
 	cfIDParsed, err := primitive.ObjectIDFromHex(cfId)
 	if err != nil {
@@ -47,16 +51,51 @@ func ProcessScheduledSurvey(cfId string, surveyId string, mongoClient *mongo.Cli
 		}
 	}
 	if survey != nil {
-		entry := bson.M{
-			"log":       fmt.Sprintf("OK! Survey %s processed", survey["name"]),
-			"timestamp": primitive.DateTime(primitive.NewDateTimeFromTime(time.Now())),
+		surveyUrl := fmt.Sprintf("http://localhost:3000/survey/%s/%s", cfId, surveyId)
+		method := "POST"
+		url := slackHook
+		body := map[string]interface{}{
+			"channel": "@szymonst2808",
+			"pretext": "Hello! We do our best to improve your develper experience. Please take a few minutes for a feedback:",
+			"text":    fmt.Sprintf("<%s|Click here to start the survey>", surveyUrl),
 		}
-		_, err = mongoClient.Database("devx-scheduler").Collection("cronlog").InsertOne(context.Background(), entry)
+		byts, _ := json.Marshal(body)
+		req, err := http.NewRequest(method, url, bytes.NewBuffer(byts))
 		if err != nil {
-			return
+			entry := bson.M{
+				"log":       "ERROR",
+				"timestamp": primitive.DateTime(primitive.NewDateTimeFromTime(time.Now())),
+				"error":     err.Error(),
+			}
+			_, err = mongoClient.Database("devx-scheduler").Collection("cronlog").InsertOne(context.Background(), entry)
+			if err != nil {
+				return
+			}
 		}
-		//===================================================
-		//TBD: sending message via integrated chat(slack/ms teams)
-		//===================================================
+		req.Header.Set("Content-Type", "application/json")
+		res, err := client.Do(req)
+		if err != nil {
+			entry := bson.M{
+				"log":       "ERROR",
+				"timestamp": primitive.DateTime(primitive.NewDateTimeFromTime(time.Now())),
+				"error":     err.Error(),
+			}
+			_, err = mongoClient.Database("devx-scheduler").Collection("cronlog").InsertOne(context.Background(), entry)
+			if err != nil {
+				return
+			}
+		}
+		if res.StatusCode == 200 {
+			entry := bson.M{
+				"log":       fmt.Sprintf("OK! Survey %s processed", survey["name"]),
+				"timestamp": primitive.DateTime(primitive.NewDateTimeFromTime(time.Now())),
+			}
+			_, err = mongoClient.Database("devx-scheduler").Collection("cronlog").InsertOne(context.Background(), entry)
+			if err != nil {
+				return
+			}
+		}
+		defer res.Body.Close()
+
 	}
 }

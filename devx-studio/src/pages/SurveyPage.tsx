@@ -12,17 +12,13 @@ function SurveyPage() {
   const params = useParams();
 
   const fetchSurvey = async() => {
-    await fetch(apiUri + "/continuousfeedback/" + params.cfid ,{method: 'GET'})
+    await fetch(apiUri + "/continuousfeedback/" + params.cfId ,{method: 'GET'})
     .then(res => res.json())
     .then(
         (result) => {
             setContinuousFeedback(result);
+            setSurvey(result.scheduledSurveys.filter((survey: any) => survey.id === params.surveyId)[0]);
         }    
-    )
-    .then(
-        () => {
-                setSurvey(continuousFeedback.scheduledSurveys.filter((survey) => survey.id === params.surveyId)[0]);
-        }
     )
     .catch((error) => {
         console.log(error);
@@ -30,14 +26,14 @@ function SurveyPage() {
   }
 
     useEffect(() => {
-        var cf = mockResponseGetContinuousFeedbacks.filter((cf) => cf.id === params.cfId)[0];
-        if (!cf) {
-            return;
-        }
-        console.log(cf);
-        setContinuousFeedback(cf);
-        setSurvey(cf.scheduledSurveys.filter((survey) => survey.id === params.surveyId)[0]);
-        //fetchSurvey();
+        // var cf = mockResponseGetContinuousFeedbacks.filter((cf) => cf.id === params.cfId)[0];
+        // if (!cf) {
+        //     return;
+        // }
+        // console.log(cf);
+        // setContinuousFeedback(cf);
+        // setSurvey(cf.scheduledSurveys.filter((survey) => survey.id === params.surveyId)[0]);
+        fetchSurvey();
     }, []);
 
   if (survey?.id === undefined) {
