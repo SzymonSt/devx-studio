@@ -74,7 +74,12 @@ func loadExistingJobs(c *cron.Cron, m *mongo.Client) (err error) {
 		return err
 	}
 	for _, job := range fetchedJobs {
-		_, err = c.AddFunc(job.Cron, func() { jobs.ProcessScheduledSurvey(job.CfId, job.SurveyId) })
+		jId, err := c.AddFunc(job.Cron, func() { jobs.ProcessScheduledSurvey(job.CfId, job.SurveyId, m) })
+		if err != nil {
+			return err
+		}
+		job.JobId = int64(jId)
+		_, err = m.Database("devx-scheduler").Collection("jobs").UpdateOne(context.Background(), bson.M{"_id": job.Id}, bson.M{"$set": bson.M{"jobId": job.JobId}})
 		if err != nil {
 			return err
 		}

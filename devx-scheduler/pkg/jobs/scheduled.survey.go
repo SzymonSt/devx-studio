@@ -1,35 +1,62 @@
 package jobs
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
-	"net/http"
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func ProcessScheduledSurvey(cfId string, surveyId string) {
-	client := http.Client{}
-
-	method := "GET"
-	url := fmt.Sprintf("http://localhost:8080/api/continuousfeedback/%s", cfId)
-	req, err := http.NewRequest(method, url, nil)
+func ProcessScheduledSurvey(cfId string, surveyId string, mongoClient *mongo.Client) {
+	fmt.Println("===Processing scheduled survey===")
+	var continuousFeedback map[string]interface{}
+	cfIDParsed, err := primitive.ObjectIDFromHex(cfId)
 	if err != nil {
-		fmt.Println(err)
+		entry := bson.M{
+			"log":       "ERROR",
+			"timestamp": primitive.DateTime(primitive.NewDateTimeFromTime(time.Now())),
+			"error":     err.Error(),
+		}
+		_, err = mongoClient.Database("devx-scheduler").Collection("cronlog").InsertOne(context.Background(), entry)
+		if err != nil {
+			return
+		}
 	}
-	res, err := client.Do(req)
+	filter := bson.M{"_id": cfIDParsed}
+	err = mongoClient.Database("devx").Collection("continuousfeedback").FindOne(context.Background(), filter).Decode(&continuousFeedback)
 	if err != nil {
-		fmt.Println(err)
+		entry := bson.M{
+			"log":       "ERROR",
+			"timestamp": primitive.DateTime(primitive.NewDateTimeFromTime(time.Now())),
+			"error":     err.Error(),
+		}
+		_, err = mongoClient.Database("devx-scheduler").Collection("cronlog").InsertOne(context.Background(), entry)
+		if err != nil {
+			return
+		}
 	}
-	if res.StatusCode != 200 {
-		fmt.Printf("Expected status 200, got %d", res.StatusCode)
-	}
-	var getResult map[string]interface{}
-	json.NewDecoder(res.Body).Decode(&getResult)
 	var survey map[string]interface{}
-	for _, s := range getResult["scheduledSurveys"].([]interface{}) {
-		if s.(map[string]interface{})["surveyId"] == surveyId {
-			survey = s.(map[string]interface{})
+	for _, s := range continuousFeedback["scheduledSurveys"].(primitive.A) {
+		surveyTmp := s.(map[string]interface{})
+		if surveyTmp["_id"] == surveyId {
+			survey = surveyTmp
 			break
 		}
 	}
-	_ = survey["audience"]
+	if survey != nil {
+		entry := bson.M{
+			"log":       fmt.Sprintf("OK! Survey %s processed", survey["name"]),
+			"timestamp": primitive.DateTime(primitive.NewDateTimeFromTime(time.Now())),
+		}
+		_, err = mongoClient.Database("devx-scheduler").Collection("cronlog").InsertOne(context.Background(), entry)
+		if err != nil {
+			return
+		}
+		//===================================================
+		//TBD: sending message via integrated chat(slack/ms teams)
+		//===================================================
+	}
 }

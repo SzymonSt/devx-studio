@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	cron "github.com/robfig/cron/v3"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -30,37 +31,44 @@ func (sc *SchedulerController) CreateOrUpdateJob(ctx *gin.Context) {
 			"message": "Invalid request body",
 		})
 	}
-	filter := bson.M{"surveyId": job.Id, "cfId": job.CfId}
+	filter := bson.M{"surveyId": job.SurveyId, "cfId": job.CfId}
 	singleResult := sc.dbClient.Database("devx-scheduler").Collection("jobs").FindOne(ctx, filter)
 	if singleResult.Err() == mongo.ErrNoDocuments {
-		jId, err := sc.cron.AddFunc(job.Cron, func() { jobs.ProcessScheduledSurvey(job.CfId, job.Id) })
+		job.Id = primitive.NewObjectID()
+		jId, err := sc.cron.AddFunc(job.Cron, func() { jobs.ProcessScheduledSurvey(job.CfId, job.SurveyId, sc.dbClient) })
 		if err != nil {
 			ctx.JSON(500, gin.H{
 				"message": "Internal server error",
 			})
+			return
 		}
 		job.JobId = int64(jId)
-		_, err = sc.dbClient.Database("devx-schedule").Collection("jobs").InsertOne(ctx, job)
+		_, err = sc.dbClient.Database("devx-scheduler").Collection("jobs").InsertOne(ctx, job)
 		if err != nil {
 			ctx.JSON(500, gin.H{
 				"message": "Internal server error",
 			})
+			return
 		}
 	} else {
-		id := cron.EntryID(job.JobId)
+		var oldJob models.Job
+		singleResult.Decode(&oldJob)
+		id := cron.EntryID(oldJob.JobId)
 		sc.cron.Remove(id)
-		jId, err := sc.cron.AddFunc(job.Cron, func() { jobs.ProcessScheduledSurvey(job.CfId, job.Id) })
+		jId, err := sc.cron.AddFunc(job.Cron, func() { jobs.ProcessScheduledSurvey(job.CfId, job.SurveyId, sc.dbClient) })
 		if err != nil {
 			ctx.JSON(500, gin.H{
 				"message": "Internal server error",
 			})
+			return
 		}
 		job.JobId = int64(jId)
-		_, err = sc.dbClient.Database("devx-schedule").Collection("jobs").UpdateOne(ctx, filter, bson.M{"$set": job})
+		_, err = sc.dbClient.Database("devx-scheduler").Collection("jobs").UpdateOne(ctx, bson.M{"_id": oldJob.Id}, bson.M{"$set": bson.M{"cron": job.Cron, "jobId": job.JobId}})
 		if err != nil {
 			ctx.JSON(500, gin.H{
-				"message": "Internal server error",
+				"message": err.Error(),
 			})
+			return
 		}
 	}
 	ctx.JSON(200, gin.H{
