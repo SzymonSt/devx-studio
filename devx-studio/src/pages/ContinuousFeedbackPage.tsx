@@ -3,10 +3,8 @@ import "./ContinuousFeedbackPage.css";
 import PageHeader from "../components/page-header/PageHeader";
 import {ContinuousFeedback} from "../interafces/continuousfeedback";
 import ContinuousFeedbackCreator from "../components/continuousfeedback-creator/ContinuousFeedbackCreator";
-import { mockResponse } from "../mocks/continuousfeedback";
-import { Card } from "react-bootstrap";
+import { mockResponseGetContinuousFeedbacks } from "../mocks/continuousfeedback";
 import ContinuousFeedbackCard from "../components/continuousfeedback-components/continuousfeedback-card/ContinuousFeedbackCard";
-import { c } from "msw/lib/glossary-de6278a9";
 
 function ContinuousFeedbackPage() {
     const apiUri = process.env.REACT_APP_API_URI;

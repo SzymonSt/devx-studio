@@ -9,6 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Tags from './pages/Tags';
 import Teams from './pages/Teams';
 import ContinuousFeedbackPage from './pages/ContinuousFeedbackPage';
+import SurveyPage from './pages/SurveyPage';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path='/backlog' element={<Backlog />}/>
           <Route path='/tags' element={<Tags />}/>
           <Route path='/teams' element={<Teams />}/>
+          <Route path='/survey/:cfId/:surveyId' element={<SurveyPage />} />
         </Routes>
       </div>
     </div>

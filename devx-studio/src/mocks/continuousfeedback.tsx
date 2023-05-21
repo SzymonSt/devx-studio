@@ -2,7 +2,7 @@ import {rest} from 'msw'
 
 const apiUri = process.env.REACT_APP_API_URI;
 
-export const mockResponse = [
+export const mockResponseGetContinuousFeedbacks = [
     {
     id: "4567899",
     name: "Continuous Feedback 1 - Infrastructure",
@@ -226,6 +226,11 @@ export const mockResponse = [
 
 export const cfhandlers = [
     rest.get(apiUri + '/continuousfeedback', (req, res, ctx) => {
-        return res(ctx.json(mockResponse))
+        return res(ctx.json(mockResponseGetContinuousFeedbacks))
+    }),
+    rest.get(apiUri + '/continuousfeedback/:id', (req, res, ctx) => {
+        const { id } = req.params
+        const cf = mockResponseGetContinuousFeedbacks.find(cf => cf.id === id)
+        return res(ctx.json(cf))
     })
 ]
