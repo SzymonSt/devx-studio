@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"devx/pkg/models"
+	"fmt"
 
-	. "github.com/ahmetalpbalkan/go-linq"
+	//. "github.com/ahmetalpbalkan/go-linq"
 	"github.com/gin-gonic/gin"
-	"github.com/montanaflynn/stats"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -21,6 +21,7 @@ func NewVerticalDataController(dbClient *mongo.Client) VerticalDataController {
 }
 
 func (vdc *VerticalDataController) GetVerticalData(ctx *gin.Context) {
+	//interval := ctx.Param("interval")
 	verticalId := ctx.Param("verticalId")
 
 	answers, err := vdc.collectAnswers(ctx, verticalId)
@@ -34,130 +35,56 @@ func (vdc *VerticalDataController) GetVerticalData(ctx *gin.Context) {
 		ctx.JSON(200, nil)
 		return
 	}
+	fmt.Printf("answers: %+v\n", answers)
 
-	scores := make([]float64, 0)
-	for _, answer := range answers {
-		for _, question := range answer.Questions {
-			if question.IsCalculatedInOverallScore {
-				scores = append(scores, question.Score)
-			}
-		}
-	}
-	overallScore := calculateOverallScore(scores)
-
-	groupedAnswers := map[string][]*models.ContinuousFeedbackAnswer{}
-	From(answers).GroupBy(
-		func(answer interface{}) interface{} {
-			return answer.(*models.ContinuousFeedbackAnswer).SurveyId
-		},
-		func(answer interface{}) interface{} {
-			return answer.(*models.ContinuousFeedbackAnswer)
-		},
-	).ToMapBy(
-		&groupedAnswers,
-		func(group interface{}) interface{} {
-			return group.(Group).Key.(string)
-		},
-		func(group interface{}) interface{} {
-			var answers []*models.ContinuousFeedbackAnswer
-			for _, answer := range group.(Group).Group {
-				answers = append(answers, answer.(*models.ContinuousFeedbackAnswer))
-			}
-			return answers
-		},
-	)
-
-	surveyScores := make([]*models.SurveyScore, 0)
-	for _, answers := range groupedAnswers {
-		surveyScore := calculatePerQuestionPerSurveyScore(answers)
-		surveyScores = append(surveyScores, surveyScore)
-	}
-
-	verticalData := models.ContinuousFeedbackAnswersData{
-		VerticalId:   verticalId,
-		OverallScore: overallScore,
-		SurveyScores: surveyScores,
-	}
-
-	ctx.JSON(200, verticalData)
+	ctx.JSON(200, answers)
 
 }
 
-func (vdc *VerticalDataController) collectAnswers(ctx *gin.Context, verticalId string) ([]*models.ContinuousFeedbackAnswer, error) {
-
-	var answers []*models.ContinuousFeedbackAnswer
-	filter := bson.M{"verticalId": verticalId}
-	answersResult, err := vdc.dbClient.Database("devx").Collection("continuousfeedbackanswers").Find(ctx, filter)
+func (vdc *VerticalDataController) collectAnswers(ctx *gin.Context, verticalId string) ([]*models.AggregateVerticalData, error) {
+	var aggAnswers []*models.AggregateVerticalData
+	matchVerticalIdGroupDate := bson.A{
+		bson.D{{"$match", bson.D{{"verticalId", "infrastruture"}}}},
+		bson.D{
+			{"$group",
+				bson.D{
+					{"_id",
+						bson.D{
+							{"$dateToString",
+								bson.D{
+									{"format", "%Y-%m-%d"},
+									{"date", "$timestamp"},
+								},
+							},
+						},
+					},
+					{"answers",
+						bson.D{
+							{"$push",
+								bson.D{
+									{"surveyId", "$surveyId"},
+									{"continuousFeedbackName", "$continuousFeedbackName"},
+									{"surveyName", "$surveyName"},
+									{"questions", "$questions"},
+									{"timestamp", "$timestamp"},
+									{"continuousFeedbackParentId", "$continuousFeedbackParentId"},
+									{"verticalId", "$verticalId"},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	answersResult, err := vdc.dbClient.Database("devx").Collection("continuousfeedbackanswers").Aggregate(ctx, matchVerticalIdGroupDate)
 	if err != nil {
 		return nil, err
 	}
-	err = answersResult.All(ctx, &answers)
+	err = answersResult.All(ctx, &aggAnswers)
 	if err != nil {
 		return nil, err
 	}
-	return answers, nil
+	return aggAnswers, nil
 
-}
-
-func calculateOverallScore(scores []float64) (overallScore models.Score) {
-	var mean float64
-	var percentile95 float64
-	var percentile99 float64
-
-	mean, _ = stats.Mean(scores)
-	percentile95, _ = stats.Percentile(scores, 95)
-	percentile99, _ = stats.Percentile(scores, 99)
-
-	return models.Score{
-		Mean:         mean,
-		Percentile95: percentile95,
-		Percentile99: percentile99,
-	}
-}
-
-func calculatePerQuestionPerSurveyScore(scores []*models.ContinuousFeedbackAnswer) *models.SurveyScore {
-	questionScoresTotals := make([]*models.QuestionScore, 0)
-	for _, answer := range scores {
-		groupedQuestionScores := map[string][]*models.ContinuousFeedbackAnswersQuestion{}
-		From(answer.Questions).GroupBy(
-			func(question interface{}) interface{} {
-				return question.(*models.ContinuousFeedbackAnswersQuestion).QuestionId
-			},
-			func(question interface{}) interface{} {
-				return question.(*models.ContinuousFeedbackAnswersQuestion)
-			},
-		).ToMapBy(&groupedQuestionScores,
-			func(group interface{}) interface{} {
-				return group.(Group).Key.(string)
-			},
-			func(group interface{}) interface{} {
-				var questions []*models.ContinuousFeedbackAnswersQuestion
-				for _, question := range group.(Group).Group {
-					questions = append(questions, question.(*models.ContinuousFeedbackAnswersQuestion))
-				}
-				return questions
-			},
-		)
-
-		for qid, question := range groupedQuestionScores {
-			questionScores := make([]float64, 0)
-			for _, questionAnswer := range question {
-				questionScores = append(questionScores, questionAnswer.Score)
-			}
-			questionScoresTotals = append(questionScoresTotals, &models.QuestionScore{
-				QuestionId:      qid,
-				QuestionContent: question[0].Question,
-				Score:           calculateOverallScore(questionScores),
-			})
-		}
-
-	}
-
-	return &models.SurveyScore{
-		SurveyName:     scores[0].SurveyName,
-		SurveyId:       scores[0].SurveyId,
-		CFId:           scores[0].ContinuousFeedbackParentId,
-		CFName:         scores[0].ContinuousFeedbackName,
-		QuestionScores: questionScoresTotals,
-	}
 }
