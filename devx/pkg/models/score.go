@@ -1,5 +1,10 @@
 package models
 
+type ScoreData struct {
+	Timestamp int64 `json:"timestamp"`
+	Score     Score `json:"score"`
+}
+
 type Score struct {
 	Mean         float64 `json:"mean"`
 	Percentile95 float64 `json:"percentile95"`
@@ -15,7 +20,7 @@ type SurveyScore struct {
 }
 
 type QuestionScore struct {
-	QuestionId      string `json:"questionId"`
-	QuestionContent string `json:"questionContent"`
-	Score           `json:"score"`
+	QuestionId      string       `json:"questionId"`
+	QuestionContent string       `json:"questionContent"`
+	ScoreData       []*ScoreData `json:"scoreData"`
 }

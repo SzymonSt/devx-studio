@@ -12,7 +12,7 @@ import {
   import { Chart } from 'react-chartjs-2';
 
 type LineChartProps = {
-    title: string;
+    verticalId: string;
 }
 
 ChartJS.register(
@@ -25,7 +25,7 @@ ChartJS.register(
     Legend,
 );
 
-const LineChart: React.FC<LineChartProps> = ({title}) => {
+const LineChart: React.FC<LineChartProps> = ({verticalId}) => {
     const options = {
       responsive: true,
       plugins: {
@@ -34,7 +34,7 @@ const LineChart: React.FC<LineChartProps> = ({title}) => {
         },
         title: {
           display: true,
-          text: title,
+          text: verticalId,
         },
       },
     };
