@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"devx/pkg/models"
-	"fmt"
 
 	//. "github.com/ahmetalpbalkan/go-linq"
 	"github.com/gin-gonic/gin"
@@ -35,7 +34,9 @@ func (vdc *VerticalDataController) GetVerticalData(ctx *gin.Context) {
 		ctx.JSON(200, nil)
 		return
 	}
-	fmt.Printf("answers: %+v\n", answers)
+	for _, answer := range answers {
+
+	}
 
 	ctx.JSON(200, answers)
 
@@ -50,12 +51,17 @@ func (vdc *VerticalDataController) collectAnswers(ctx *gin.Context, verticalId s
 				bson.D{
 					{"_id",
 						bson.D{
-							{"$dateToString",
+							{"time",
 								bson.D{
-									{"format", "%Y-%m-%d"},
-									{"date", "$timestamp"},
+									{"$dateToString",
+										bson.D{
+											{"format", "%Y-%m-%d"},
+											{"date", "$timestamp"},
+										},
+									},
 								},
 							},
+							{"surveyId", "$surveyId"},
 						},
 					},
 					{"answers",
@@ -76,6 +82,23 @@ func (vdc *VerticalDataController) collectAnswers(ctx *gin.Context, verticalId s
 				},
 			},
 		},
+		bson.D{
+			{"$set",
+				bson.D{
+					{"timeDate",
+						bson.D{
+							{"$dateFromString",
+								bson.D{
+									{"dateString", "$_id.time"},
+									{"format", "%Y-%m-%d"},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		bson.D{{"$sort", bson.D{{"timeDate", 1}}}},
 	}
 	answersResult, err := vdc.dbClient.Database("devx").Collection("continuousfeedbackanswers").Aggregate(ctx, matchVerticalIdGroupDate)
 	if err != nil {
@@ -87,4 +110,12 @@ func (vdc *VerticalDataController) collectAnswers(ctx *gin.Context, verticalId s
 	}
 	return aggAnswers, nil
 
+}
+
+func calculateOverallScore(answers []*models.AggregateVerticalData) []*models.ScoreData {
+	return nil
+}
+
+func calculateSurveyScore(answers []*models.AggregateVerticalData) *models.SurveyScore {
+	return nil
 }
