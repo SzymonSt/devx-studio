@@ -1,5 +1,6 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
+var cors = require('cors')
 const { MongoClient, ServerApiVersion } = require("mongodb");
 require('dotenv').config();
 
@@ -13,6 +14,7 @@ const mongoURI = process.env.MONGO_URI;
 const client = new MongoClient(mongoURI);
 
 app.use(express.json());
+app.use(cors());
 
 app.post('/share-demo', (req, res) => {
     const { firstname,lastname ,email, company } = req.body;
