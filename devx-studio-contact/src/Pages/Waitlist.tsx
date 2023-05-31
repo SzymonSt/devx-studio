@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Waitlist.css';
 
@@ -12,7 +13,7 @@ function Waitlist() {
   const [email, setEmail] = useState('');
   const [validated, setValidated] = useState(false);
   const [buttonClassname, setButtonClassName ] = useState('demo-button-disabled');
-
+  const navigate = useNavigate();
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -35,7 +36,7 @@ function Waitlist() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     async function submitForm(){
-    await fetch( $apiUrl + '/share-demo', {
+    await fetch( $apiUrl + '/waitlist', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -47,14 +48,14 @@ function Waitlist() {
         }
       ).then((response) => {
         if (response.status === 200) {
-          alert('Thank you for your interest! We will be in touch shortly.');
           setName('');
           setEmail('');
+          navigate('/thanks-for-interest');
         }else{
-          alert('Something went wrong. Please try again later.');
+          navigate('/something-went-wrong');
         }
       }).catch((error) => {
-        alert('Something went wrong. Please try again later.');
+        navigate('/something-went-wrong');
       }
       );
     }

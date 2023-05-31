@@ -68,6 +68,19 @@ app.post('/share-demo', (req, res) => {
     }
 });
 
+app.post('/waitlist', (req, res) => {
+    const { firstname, email } = req.body;
+    try {
+        client.db("devx-contact").collection("waitlist").insertOne({
+            firstname: firstname,
+            email: email
+        })
+    } catch (error) {
+        res.status(500).send('Something went wrong.');
+    }
+    res.status(200).send('Contact waitlist successfully added!');
+});
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
   });
