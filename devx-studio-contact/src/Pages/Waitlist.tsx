@@ -8,6 +8,7 @@ import './Waitlist.css';
 
 function Waitlist() {
   const $apiUrl = process.env.REACT_APP_API_URL;
+  const apiKey = process.env.REACT_APP_API_KEY;
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -39,7 +40,8 @@ function Waitlist() {
     await fetch( $apiUrl + '/waitlist', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': ''+apiKey 
           },
           body: JSON.stringify({
             "firstname": name,
