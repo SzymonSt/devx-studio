@@ -1,8 +1,8 @@
 package models
 
 type ScoreData struct {
-	Timestamp int64 `json:"timestamp"`
-	Score     Score `json:"score"`
+	Timestamp string `json:"timestamp"`
+	Score     Score  `json:"score"`
 }
 
 type Score struct {

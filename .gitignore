@@ -4,6 +4,7 @@
 /devx-studio/node_modules
 /devx-studio-contact/node_modules
 /devx-studio-contact-function/node_modules
+/devx-studio-contact-function/functions/node_modules
 /devx-studio-contact-function/godaddy-studiodevx.pdf
 /.pnp
 .pnp.js
