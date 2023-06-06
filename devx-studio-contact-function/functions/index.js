@@ -51,7 +51,7 @@ app.post("/share-demo", (req, res) => {
     attachments: [
         {
             filename: "questions.pdf",
-            path: "./content/godaddy-studiodevx.pdf",
+            path: "./content/DevEx_questions_and_analysis.pdf",
         }
     ]
   };
