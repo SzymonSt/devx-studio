@@ -138,3 +138,16 @@ body{
     }
   }
   
+  .spinner {
+    position: relative;
+    top: 50%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    border-top-color: #333;
+    border-radius: 50%;
+    animation: App-logo-spin 1s infinite linear;
+  }
+  

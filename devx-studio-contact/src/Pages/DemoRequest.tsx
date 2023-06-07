@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './DemoRequest.css';
 
@@ -14,6 +15,8 @@ function DemoRequest() {
   const [company, setCompany] = useState('');
   const [validated, setValidated] = useState(false);
   const [buttonClassname, setButtonClassName ] = useState('demo-button-disabled');
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,33 +47,34 @@ function DemoRequest() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
     async function submitForm(){
-    await fetch( $apiUrl + '/share-demo', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            "firstname": name,
-            "lastname": lastname,
-            "email": email,
-            "company":company
-          })
+      await fetch( $apiUrl + '/share-demo', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              "firstname": name,
+              "lastname": lastname,
+              "email": email,
+              "company":company
+            })
+          }
+        ).then((response) => {
+          if (response.status === 200) {
+            setName('');
+            setLastname('');
+            setEmail('');
+            setCompany('');
+            navigate('/thanks-for-interest');
+          }else{
+            navigate('/something-went-wrong');
+          }
+        }).catch((error) => {
+          navigate('/something-went-wrong');
         }
-      ).then((response) => {
-        if (response.status === 200) {
-          alert('Thank you for your interest! We will be in touch shortly.');
-          setName('');
-          setLastname('');
-          setEmail('');
-          setCompany('');
-        }else{
-          alert('Something went wrong. Please try again later.');
-        }
-      }).catch((error) => {
-        alert('Something went wrong. Please try again later.');
-      }
-      );
+        );
     }
     submitForm();
   }
@@ -105,7 +109,7 @@ function DemoRequest() {
             <Form.Control value={email} onChange={handleEmailChange} className='demo-input' type="email" placeholder="Enter email" />
             <Form.Label className='form-label'>Company<span className='astrix'>*</span></Form.Label>
             <Form.Control value={company} onChange={handleCompanyChange} className='demo-input' type="text" placeholder="Enter company name" />
-            <Button disabled={!validated} className={buttonClassname} variant="primary" type="submit">Submit</Button>
+            <Button disabled={!validated} className={buttonClassname} variant="primary" type="submit">{isLoading ? <div className='spinner'></div> : 'Submit'}</Button>
           </Form.Group>
         </Form>
       </div>

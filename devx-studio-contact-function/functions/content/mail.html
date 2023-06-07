@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    /* CSS styles for the mail template */
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333333;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #cccccc;
+      background-color: #f9f9f9;
+    }
+    .logo-p1{
+    color: #66CC00;
+  }
+  
+  .logo-p2{
+    color: #66B2FF;
+  }
+    h1 {
+      color: #333333;
+    }
+    p {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 class="logo">
+        <span class='logo-p1'>DevX</span><span class='logo-p2'>Studio</span>
+    </h2>
+    <h1>Hello {{firstname}},</h1>
+    <p>Thank you for your interest in DevXStudio project.</p>
+
+    <p>
+        - You can check out project demo here: <a href="{{ytDemoLink}}">[link]</a><br>
+        - Essential survey questions for assessing DevEx state in your organization is attached to the email. <br>
+        - If you look forward to use DevXStudio, sign up for a wait list: https://studiodevx.com/waitlist
+    </p>
+    
+    <p><b>Best regards,</b><br>
+    Szymon Stawski<br> from <span class='logo-p1'>DevX</span><span class='logo-p2'>Studio</span> team.</p>
+  </div>
+</body>
+</html>
