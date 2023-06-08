@@ -57,15 +57,15 @@ func (vdc *VerticalDataController) GetDetailedVerticalData(ctx *gin.Context) {
 		ctx.JSON(200, nil)
 		return
 	}
-	//score := calculateSurveysScore(answers)
+	score := calculateSurveysScore(answers)
 
-	ctx.JSON(200, answers)
+	ctx.JSON(200, score)
 }
 
 func (vdc *VerticalDataController) collectVerticalAnswersGroupedByDateAndSurveyId(ctx *gin.Context, verticalId string) ([]*models.AggregateVerticalDataByDateAndSurveyId, error) {
 	var aggAnswers []*models.AggregateVerticalDataByDateAndSurveyId
 	matchVerticalIdGroupDateAndSurveyId := bson.A{
-		bson.D{{"$match", bson.D{{"verticalId", "infrastruture"}}}},
+		bson.D{{"$match", bson.D{{"verticalId", verticalId}}}},
 		bson.D{
 			{"$group",
 				bson.D{
@@ -75,7 +75,7 @@ func (vdc *VerticalDataController) collectVerticalAnswersGroupedByDateAndSurveyI
 								bson.D{
 									{"$dateToString",
 										bson.D{
-											{"format", "%Y-%m-%d"},
+											{"format", "%Y-%m"},
 											{"date", "$timestamp"},
 										},
 									},
@@ -102,23 +102,7 @@ func (vdc *VerticalDataController) collectVerticalAnswersGroupedByDateAndSurveyI
 				},
 			},
 		},
-		bson.D{
-			{"$set",
-				bson.D{
-					{"timeDate",
-						bson.D{
-							{"$dateFromString",
-								bson.D{
-									{"dateString", "$_id.time"},
-									{"format", "%Y-%m-%d"},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-		bson.D{{"$sort", bson.D{{"timeDate", 1}}}},
+		bson.D{{"$sort", bson.D{{"_id", 1}}}},
 	}
 	answersResult, err := vdc.dbClient.Database("devx").Collection("continuousfeedbackanswers").Aggregate(ctx, matchVerticalIdGroupDateAndSurveyId)
 	if err != nil {
@@ -135,7 +119,7 @@ func (vdc *VerticalDataController) collectVerticalAnswersGroupedByDateAndSurveyI
 func (vdc *VerticalDataController) collectVerticalAnswersGroupedByDate(ctx *gin.Context, verticalId string) ([]*models.AggregateVerticalDataByDate, error) {
 	var aggAnswers []*models.AggregateVerticalDataByDate
 	matchVerticalIdGroupDate := bson.A{
-		bson.D{{"$match", bson.D{{"verticalId", "infrastruture"}}}},
+		bson.D{{"$match", bson.D{{"verticalId", verticalId}}}},
 		bson.D{
 			{"$group",
 				bson.D{
@@ -145,7 +129,7 @@ func (vdc *VerticalDataController) collectVerticalAnswersGroupedByDate(ctx *gin.
 								bson.D{
 									{"$dateToString",
 										bson.D{
-											{"format", "%Y-%m-%d"},
+											{"format", "%Y-%m"},
 											{"date", "$timestamp"},
 										},
 									},
@@ -207,5 +191,66 @@ func calculateOverallScore(answers []*models.AggregateVerticalDataByDate) []*mod
 }
 
 func calculateSurveysScore(answers []*models.AggregateVerticalDataByDateAndSurveyId) []*models.SurveyScore {
-	return nil
+	surveysScores := make([]*models.SurveyScore, 0)
+	answerGroups := make(map[string][]*models.AggregateVerticalDataByDateAndSurveyId)
+	for _, answer := range answers {
+		answerGroups[answer.Id.SurveyId] = append(answerGroups[answer.Id.SurveyId], answer)
+	}
+	for _, answerGroup := range answerGroups {
+		surveyScore := &models.SurveyScore{
+			SurveyId:       answerGroup[0].Id.SurveyId,
+			SurveyName:     answerGroup[0].Answers[0].SurveyName,
+			CFId:           answerGroup[0].Answers[0].ContinuousFeedbackParentId,
+			CFName:         answerGroup[0].Answers[0].ContinuousFeedbackName,
+			QuestionScores: make([]*models.QuestionScore, 0),
+		}
+		for _, q := range answerGroup[0].Answers[0].Questions {
+			surveyQuestions := &models.QuestionScore{
+				QuestionId:      q.QuestionId,
+				QuestionContent: q.Question,
+				ScoreData:       make([]*models.ScoreData, 0),
+			}
+			surveyScore.QuestionScores = append(surveyScore.QuestionScores, surveyQuestions)
+		}
+
+		for _, answerGroupItem := range answerGroup {
+			scoreData := &models.ScoreData{
+				Timestamp: answerGroupItem.Id.Time,
+				Score:     models.Score{},
+			}
+			questionScoresGroup := make(map[string][]float64)
+			for _, q := range answerGroupItem.Answers[0].Questions {
+				questionScoresGroup[q.Question] = []float64{}
+			}
+			for _, answerItem := range answerGroupItem.Answers {
+				for _, que := range answerItem.Questions {
+					questionScoresGroup[que.Question] = append(questionScoresGroup[que.Question], que.Score)
+				}
+			}
+			for _, q := range answerGroup[0].Answers[0].Questions {
+				mean := stat.Mean(questionScoresGroup[q.Question], nil)
+				p95, err := stats.Percentile(questionScoresGroup[q.Question], 95)
+				if err != nil {
+					fmt.Println(err)
+				}
+				p99, err := stats.Percentile(questionScoresGroup[q.Question], 99)
+				if err != nil {
+					fmt.Println(err)
+				}
+				scoreData.Score = models.Score{
+					Mean:         mean,
+					Percentile95: p95,
+					Percentile99: p99,
+				}
+				for _, qs := range surveyScore.QuestionScores {
+					if qs.QuestionContent == q.Question {
+						qs.ScoreData = append(qs.ScoreData, scoreData)
+						break
+					}
+				}
+			}
+		}
+		surveysScores = append(surveysScores, surveyScore)
+	}
+	return surveysScores
 }
