@@ -34,9 +34,6 @@ func (vdc *VerticalDataController) GetVerticalData(ctx *gin.Context) {
 		ctx.JSON(200, nil)
 		return
 	}
-	for _, answer := range answers {
-
-	}
 
 	ctx.JSON(200, answers)
 

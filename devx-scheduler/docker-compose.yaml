@@ -1,0 +1,12 @@
+version: '3'
+services:
+  devx:
+    image: devx/sched:latest
+    ports:
+      - "8089:8089"
+    networks:
+      - devxnet
+
+networks:
+  devxnet:
+    driver: bridge

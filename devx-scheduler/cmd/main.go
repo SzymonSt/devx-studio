@@ -16,7 +16,6 @@ import (
 	cron "github.com/robfig/cron/v3"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func main() {
@@ -32,14 +31,14 @@ func main() {
 	c := cron.New()
 
 	//Set up mongo client
-	mongoClient, err := mongo.Connect(context.Background(), options.Client().ApplyURI(config.DBUri))
-	if err != nil {
-		fmt.Println("[ERROR]" + err.Error())
-	}
-	err = loadExistingJobs(c, mongoClient, config.SlackHook)
-	if err != nil {
-		fmt.Println("[ERROR]" + err.Error())
-	}
+	// mongoClient, err := mongo.Connect(context.Background(), options.Client().ApplyURI(config.DBUri))
+	// if err != nil {
+	// 	fmt.Println("[ERROR]" + err.Error())
+	// }
+	// err = loadExistingJobs(c, mongoClient, config.SlackHook)
+	// if err != nil {
+	// 	fmt.Println("[ERROR]" + err.Error())
+	// }
 
 	//Set up http server
 	corsConfig := cors.DefaultConfig()
@@ -47,7 +46,7 @@ func main() {
 	corsConfig.AllowCredentials = true
 	server.Use(cors.New(corsConfig))
 
-	schedulerController := controllers.NewSchedulerController(mongoClient, c, config.SlackHook)
+	schedulerController := controllers.NewSchedulerController(c)
 	schedulerRouteController := routes.NewSchedulerRoutes(schedulerController)
 
 	router := server.Group("/api")
@@ -74,7 +73,7 @@ func loadExistingJobs(c *cron.Cron, m *mongo.Client, slackHook string) (err erro
 		return err
 	}
 	for _, job := range fetchedJobs {
-		jId, err := c.AddFunc(job.Cron, func() { jobs.ProcessScheduledSurvey(job.CfId, job.SurveyId, m, slackHook) })
+		jId, err := c.AddFunc(job.Cron, func() { jobs.ProcessScheduledSurvey(job.CfId, job.SurveyId) })
 		if err != nil {
 			return err
 		}
